@@ -8,7 +8,14 @@ public class Main {
 //CharSal, SquirtSal, ChikoSal, CyndaSal ou TotoSal. alguém lembra de descomentar dps plskkkkkkkk é so pra lembrar os nomes
     public static void menuP() {
         Scanner sc = new Scanner(System.in);
-        int poke = sc.nextInt();
+
+        Pokemon bulbasal = new Pokemon("BulbaSal", "Planta", 43, 39, 45, 45);
+        Pokemon charsal = new Pokemon("CharSal", "Fogo", 52, 43, 39, 65);
+        Pokemon squirtsal = new Pokemon("SquirtSal", "Água", 48, 65, 44, 43);
+        Pokemon chikosal = new Pokemon("ChikoSal", "Planta", 49, 65, 45, 45);
+        Pokemon cyndasal = new Pokemon("CyndaSal", "Fogo", 52, 43, 39, 65);
+        Pokemon totosal = new Pokemon("TotoSal", "Água", 49, 49, 45, 45);
+
         System.out.println("********0 Torneio Vai Começar, Escolha Seu Inicial********");
         System.out.println("********1- BulbaSal********");
         System.out.println("********2- CharSal********");
@@ -17,6 +24,7 @@ public class Main {
         System.out.println("********5- CyndaSal********");
         System.out.println("********6- TotoSal********");
         System.out.println("********Digite o Número do Seu Pokemon***********");
+        int poke = sc.nextInt();
         Pokemon pokeEsc = null;
 
         if (poke == 1) {
@@ -31,12 +39,15 @@ public class Main {
             pokeEsc = cyndasal;
         } else if (poke == 6) {
             pokeEsc = totosal;
-        } else {
+        }if (pokeEsc != null) {
+            System.out.println("\nÓtima escolha! Você pegou o " + pokeEsc.getNome() + "!");
+            pokeEsc.exibirSts();
+        }else {
             System.out.println("Escolha Dentre as Opções");
             return;
         }
         System.out.println("\nVocê escolheu o " + pokeEsc.getNome() + "!");
     }
 }
-        }
-                }
+
+
