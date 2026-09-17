@@ -10,13 +10,14 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
         Pokemon bulbasal = new Pokemon("BulbaSal", "Planta", 43, 39, 45, 45);
-        Pokemon charsal = new Pokemon("CharSal", "Fogo", 52, 43, 39, 65);
+        Pokemon charsal = new Pokemon("CharSal", "Fogo", 54, 43, 40, 65);
         Pokemon squirtsal = new Pokemon("SquirtSal", "Água", 48, 65, 44, 43);
         Pokemon chikosal = new Pokemon("ChikoSal", "Planta", 49, 65, 45, 45);
         Pokemon cyndasal = new Pokemon("CyndaSal", "Fogo", 52, 43, 39, 65);
         Pokemon totosal = new Pokemon("TotoSal", "Água", 49, 49, 45, 45);
 
-        System.out.println("********0 Torneio Vai Começar, Escolha Seu Inicial********");
+        System.out.println("********0 Torneio Está para Começar Treinador***********");
+        System.out.println("*******Rápido, Escolha Seu Inicial!********");
         System.out.println("********1- BulbaSal********");
         System.out.println("********2- CharSal********");
         System.out.println("********3- SquirtSal********");
