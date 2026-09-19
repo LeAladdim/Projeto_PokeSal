@@ -23,6 +23,7 @@ public class TipoAgua implements TipoPoke {
         System.out.println(
             "Correnteza ágil! A Velocidade de " + usuario.getNome() + " aumentou para " +
                 usuario.getSpd() + "!");
+        Batalha.pausar(1500);
     }
 
     @Override
@@ -31,5 +32,6 @@ public class TipoAgua implements TipoPoke {
         System.out.println(
             "Esforço exaustivo no alvo... O Ataque de " + usuario.getNome() + " diminuiu para " +
                 usuario.getAtk() + "!");
+        Batalha.pausar(1500);
     }
 }

@@ -3,31 +3,36 @@ package pokeucsal;
 import java.util.Scanner;
 
 public class Bag {
+    private final int LIMITE_ITENS = 2;
+
     private int potion = 1;
+
     private int superPotion = 2;
+
     private int salShard = 1;
 
     private int itensUsd = 0;
-    private final int LIM_IT = 2;
 
     public void resetarUsoBatalha() {
         this.itensUsd = 0;
     }
 
     public boolean abrirMochila(Pokemon aliado, Batalha arena) {
-        if (itensUsd >= LIM_IT) {
-            System.out.println("\nLimite maximo de " + LIM_IT + " itens atingido nesta batalha.");
+        if (itensUsd >= LIMITE_ITENS) {
+            System.out.println(
+                "\nLimite maximo de " + LIMITE_ITENS + " itens atingido nesta batalha.");
             return false;
         }
 
-        Scanner sc = new Scanner(System.in);
-        System.out.println("\n--- MOCHILA (Itens usados: " + itensUsd + "/" + LIM_IT + ") ---");
+        final Scanner sc = new Scanner(System.in);
+        System.out.println(
+            "\n--- MOCHILA (Itens usados: " + itensUsd + "/" + LIMITE_ITENS + ") ---");
         System.out.println("1 - Potion (Cura 15%) [Restam: " + potion + "]");
         System.out.println("2 - Super Potion (Cura 35%) [Restam: " + superPotion + "]");
         System.out.println("3 - Sal Shard (Muda o Terreno) [Restam: " + salShard + "]");
         System.out.println("0 - Voltar");
 
-        int escolha = sc.nextInt();
+        final int escolha = sc.nextInt();
         boolean itemUtilizado = false;
 
         if (escolha == 1 && potion > 0) {

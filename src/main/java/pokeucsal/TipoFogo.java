@@ -22,6 +22,7 @@ public class TipoFogo implements TipoPoke {
         usuario.setAtk(usuario.getAtk() + 10);
         System.out.println("A chama cresce! O Ataque de " + usuario.getNome() + " aumentou para " +
             usuario.getAtk() + "!");
+        Batalha.pausar(1500);
     }
 
     @Override
@@ -30,5 +31,6 @@ public class TipoFogo implements TipoPoke {
         // Texto alterado de "CharSal" para refletir o usuário recebendo o debuff
         System.out.println("Golpe de risco! A Defesa de " + usuario.getNome() + " diminuiu para " +
             usuario.getDef() + " devido ao calor sufocante!");
+        Batalha.pausar(1500);
     }
 }

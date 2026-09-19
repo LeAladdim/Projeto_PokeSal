@@ -23,6 +23,7 @@ public class TipoPlanta implements TipoPoke {
         System.out.println(
             "Casca mais grossa! A Defesa de " + usuario.getNome() + " aumentou para " +
                 usuario.getDef() + "!");
+        Batalha.pausar(1500);
     }
 
     @Override
@@ -31,5 +32,6 @@ public class TipoPlanta implements TipoPoke {
         System.out.println(
             "Raizes pesadas envolvem o alvo... A Velocidade de " + usuario.getNome() + " " +
                 "diminuiu para " + usuario.getSpd() + "!");
+        Batalha.pausar(1500);
     }
 }

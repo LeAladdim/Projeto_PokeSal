@@ -1,8 +1,10 @@
 package pokeucsal;
+
 import java.util.Random;
 
 public abstract class Golpe {
     protected String nome;
+
     protected int poderBase;
 
     public Golpe(String nome, int poderBase) {
@@ -15,7 +17,7 @@ public abstract class Golpe {
     }
 
     protected boolean acertou(Pokemon atacante) {
-        Random rand = new Random();
+        final Random rand = new Random();
         return rand.nextInt(100) < atacante.getPrecisao();
     }
 
@@ -26,7 +28,9 @@ public abstract class Golpe {
     public abstract void executar(Pokemon atacante, Pokemon defensor);
 
     public static class Normal extends Golpe {
-        public Normal(String nome, int poderBase) { super(nome, poderBase); }
+        public Normal(String nome, int poderBase) {
+            super(nome, poderBase);
+        }
 
         @Override
         public void executar(Pokemon atacante, Pokemon defensor) {
@@ -35,13 +39,15 @@ public abstract class Golpe {
                 System.out.println("O ataque errou!");
                 return;
             }
-            int dano = calcularDanoBruto(atacante);
+            final int dano = calcularDanoBruto(atacante);
             defensor.dano(dano);
         }
     }
 
     public static class Elemental extends Golpe {
-        public Elemental(String nome, int poderBase) { super(nome, poderBase); }
+        public Elemental(String nome, int poderBase) {
+            super(nome, poderBase);
+        }
 
         public void executar(Pokemon atacante, Pokemon defensor, String climaAtual) {
             System.out.println("\n>>> " + atacante.getNome() + " usou " + nome + "!");
@@ -49,14 +55,17 @@ public abstract class Golpe {
                 System.out.println("O ataque errou!");
                 return;
             }
-            double mult = atacante.getTipo().calcMult(defensor.getTipo());
-            if (mult > 1.0) System.out.println("É super efetivo!");
-            else if (mult < 1.0) System.out.println("Não é muito efetivo...");
+            final double mult = atacante.getTipo().calcMult(defensor.getTipo());
+            if (mult > 1.0) {
+                System.out.println("É super efetivo!");
+            } else if (mult < 1.0) {
+                System.out.println("Não é muito efetivo...");
+            }
 
             double danoCalculado = calcularDanoBruto(atacante) * mult;
 
 
-            String tipoAtacante = atacante.getTipo().getNomeTipo();
+            final String tipoAtacante = atacante.getTipo().getNomeTipo();
             if (climaAtual.equals("Asfalto Quente") && tipoAtacante.equals("Fogo")) {
                 danoCalculado *= 1.15;
                 System.out.println(" O Asfalto Quente potencializou o golpe de Fogo!");
@@ -85,7 +94,9 @@ public abstract class Golpe {
     }
 
     public static class Buff extends Golpe {
-        public Buff(String nome) { super(nome, 0); }
+        public Buff(String nome) {
+            super(nome, 0);
+        }
 
         @Override
         public void executar(Pokemon atacante, Pokemon defensor) {
@@ -96,7 +107,9 @@ public abstract class Golpe {
     }
 
     public static class Debuff extends Golpe {
-        public Debuff(String nome, int poderBase) { super(nome, poderBase); }
+        public Debuff(String nome, int poderBase) {
+            super(nome, poderBase);
+        }
 
         @Override
         public void executar(Pokemon atacante, Pokemon defensor) {
@@ -105,7 +118,7 @@ public abstract class Golpe {
                 System.out.println("O ataque errou!");
                 return;
             }
-            int dano = calcularDanoBruto(atacante);
+            final int dano = calcularDanoBruto(atacante);
             defensor.dano(dano);
             defensor.getTipo().apDb(defensor);
         }

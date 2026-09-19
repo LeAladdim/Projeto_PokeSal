@@ -5,19 +5,19 @@ public class Pokemon {
 
     private final TipoPoke tipo;
 
+    private final int maxHp;
+
+    private final Golpe[] golpes;
+
     private int atk;
 
     private int def;
 
     private int hp;
 
-    private final int maxHp;
-
     private int spd;
 
     private int precisao = 100;
-
-    private final Golpe[] golpes;
 
     private boolean queimado = false;
 
@@ -50,8 +50,16 @@ public class Pokemon {
         return atk;
     }
 
+    public void setAtk(int atk) {
+        this.atk = atk;
+    }
+
     public int getDef() {
         return def;
+    }
+
+    public void setDef(int def) {
+        this.def = def;
     }
 
     public int getHp() {
@@ -62,24 +70,16 @@ public class Pokemon {
         return spd;
     }
 
+    public void setSpd(int spd) {
+        this.spd = spd;
+    }
+
     public int getPrecisao() {
         return precisao;
     }
 
     public Golpe[] getGolpes() {
         return golpes;
-    }
-
-    public void setAtk(int atk) {
-        this.atk = atk;
-    }
-
-    public void setDef(int def) {
-        this.def = def;
-    }
-
-    public void setSpd(int spd) {
-        this.spd = spd;
     }
 
     public boolean isQueimado() {
