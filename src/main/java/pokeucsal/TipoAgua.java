@@ -29,7 +29,7 @@ public class TipoAgua implements TipoPoke {
     public void apDb(Pokemon usuario) {
         usuario.setAtk(usuario.getAtk() - 5);
         System.out.println(
-            "Esforço exaustivo! O Ataque de " + usuario.getNome() + " diminuiu para " +
+            "Esforço exaustivo no alvo... O Ataque de " + usuario.getNome() + " diminuiu para " +
                 usuario.getAtk() + "!");
     }
 }

@@ -29,7 +29,7 @@ public class TipoPlanta implements TipoPoke {
     public void apDb(Pokemon usuario) {
         usuario.setSpd(usuario.getSpd() - 5);
         System.out.println(
-            "Raízes pesadas... A Velocidade de " + usuario.getNome() + " diminuiu para " +
-                usuario.getSpd() + "!");
+            "Raizes pesadas envolvem o alvo... A Velocidade de " + usuario.getNome() + " " +
+                "diminuiu para " + usuario.getSpd() + "!");
     }
 }

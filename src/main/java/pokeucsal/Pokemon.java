@@ -1,20 +1,30 @@
 package pokeucsal;
 
 public class Pokemon {
-    private String nome;
-    private TipoPoke tipo;
-    private int atk;
-    private int def;
-    private int hp;
-    private int maxHp;
-    private int spd;
-    private int precisao = 100;
-    private Golpe[] golpes;
+    private final String nome;
 
-    // Estados de Status Passivos
+    private final TipoPoke tipo;
+
+    private int atk;
+
+    private int def;
+
+    private int hp;
+
+    private final int maxHp;
+
+    private int spd;
+
+    private int precisao = 100;
+
+    private final Golpe[] golpes;
+
     private boolean queimado = false;
+
     private boolean envenenado = false;
+
     private boolean paralisado = false;
+
     private int turnosEnvenenado = 0;
 
     public Pokemon(String nome, TipoPoke tipo, int atk, int def, int hp, int spd, Golpe[] golpes) {
@@ -28,57 +38,106 @@ public class Pokemon {
         this.golpes = golpes;
     }
 
-    public String getNome() { return nome; }
-    public TipoPoke getTipo() { return tipo; }
-    public int getAtk() { return atk; }
-    public int getDef() { return def; }
-    public int getHp() { return hp; }
-    public int getSpd() { return spd; }
-    public int getPrecisao() { return precisao; }
-    public Golpe[] getGolpes() { return golpes; }
-
-    public void setAtk(int atk) { this.atk = atk; }
-    public void setDef(int def) { this.def = def; }
-    public void setSpd(int spd) { this.spd = spd; }
-
-    public boolean isQueimado() { return queimado; }
-    public void setQueimado(boolean queimado) {
-        this.queimado = queimado;
-        if (queimado) System.out.println("🔥 " + nome + " foi queimado!");
+    public String getNome() {
+        return nome;
     }
 
-    public boolean isEnvenenado() { return envenenado; }
+    public TipoPoke getTipo() {
+        return tipo;
+    }
+
+    public int getAtk() {
+        return atk;
+    }
+
+    public int getDef() {
+        return def;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public int getSpd() {
+        return spd;
+    }
+
+    public int getPrecisao() {
+        return precisao;
+    }
+
+    public Golpe[] getGolpes() {
+        return golpes;
+    }
+
+    public void setAtk(int atk) {
+        this.atk = atk;
+    }
+
+    public void setDef(int def) {
+        this.def = def;
+    }
+
+    public void setSpd(int spd) {
+        this.spd = spd;
+    }
+
+    public boolean isQueimado() {
+        return queimado;
+    }
+
+    public void setQueimado(boolean queimado) {
+        this.queimado = queimado;
+        if (queimado) {
+            System.out.println(nome + " foi queimado!");
+        }
+    }
+
+    public boolean isEnvenenado() {
+        return envenenado;
+    }
+
     public void setEnvenenado(boolean envenenado) {
         this.envenenado = envenenado;
         if (envenenado) {
             this.turnosEnvenenado = 0;
-            System.out.println("☠️ " + nome + " foi envenenado!");
+            System.out.println(nome + " foi envenenado!");
         }
     }
 
-    public boolean isParalisado() { return paralisado; }
+    public boolean isParalisado() {
+        return paralisado;
+    }
+
     public void setParalisado(boolean paralisado) {
         this.paralisado = paralisado;
         if (paralisado) {
-            this.spd = (int)(this.spd * 0.75); // Reduz SPD em 25%
-            System.out.println("⚡ " + nome + " foi paralisado e sua velocidade caiu!");
+            this.spd = (int) (this.spd * 0.75); // Reduz SPD em 25%
+            System.out.println(nome + " foi paralisado e sua velocidade caiu!");
         }
     }
 
-    // Processamento de danos passivos no fim do turno
     public void processarStatusFimDeTurno() {
         if (queimado) {
-            int danoQueimadura = Math.max(1, maxHp / 16);
+            final int danoQueimadura = Math.max(1, maxHp / 16);
             this.hp -= danoQueimadura;
-            if (this.hp < 0) this.hp = 0;
-            System.out.println("🔥 " + nome + " sofreu " + danoQueimadura + " de dano por queimadura! HP: " + this.hp + "/" + maxHp);
+            if (this.hp < 0) {
+                this.hp = 0;
+            }
+            System.out.println(
+                nome + " sofreu " + danoQueimadura + " de dano por queimadura! HP: " + this.hp +
+                    "/" + maxHp);
         }
         if (envenenado) {
             turnosEnvenenado++;
-            int danoVeneno = Math.max(1, (maxHp / 16) * turnosEnvenenado);
+            final int danoVeneno = Math.max(1, (maxHp / 16) * turnosEnvenenado);
             this.hp -= danoVeneno;
-            if (this.hp < 0) this.hp = 0;
-            System.out.println("☠️ " + nome + " sofreu " + danoVeneno + " de dano por veneno acumulado! HP: " + this.hp + "/" + maxHp);
+            if (this.hp < 0) {
+                this.hp = 0;
+            }
+            System.out.println(
+                nome + " sofreu " + danoVeneno + " de dano por veneno acumulado! HP: " + this.hp +
+                    "/" + maxHp);
         }
     }
 
@@ -91,21 +150,23 @@ public class Pokemon {
     }
 
     public void dano(int danoBruto) {
-        int danoEfetivo = Math.max(0, danoBruto - this.def);
+        final int danoEfetivo = Math.max(0, danoBruto - this.def);
         this.hp -= danoEfetivo;
         if (this.hp < 0) {
             this.hp = 0;
         }
-        System.out.println(this.nome + " recebeu " + danoEfetivo + " de dano! Vida restante: " + this.hp + "/" + maxHp);
+        System.out.println(
+            this.nome + " recebeu " + danoEfetivo + " de dano! Vida restante: " + this.hp + "/" +
+                maxHp);
     }
 
     public void curar(double porcentagem) {
-        int valorCura = (int) (this.maxHp * porcentagem);
+        final int valorCura = (int) (this.maxHp * porcentagem);
         this.hp += valorCura;
         if (this.hp > this.maxHp) {
             this.hp = this.maxHp;
         }
-        System.out.println("🌿 " + this.nome + " recuperou vida! HP atual: " + this.hp + "/" + maxHp);
+        System.out.println(this.nome + " recuperou vida! HP atual: " + this.hp + "/" + maxHp);
     }
 
     public void exibirSts() {

@@ -27,7 +27,8 @@ public class TipoFogo implements TipoPoke {
     @Override
     public void apDb(Pokemon usuario) {
         usuario.setDef(usuario.getDef() - 5);
+        // Texto alterado de "CharSal" para refletir o usuário recebendo o debuff
         System.out.println("Golpe de risco! A Defesa de " + usuario.getNome() + " diminuiu para " +
-            usuario.getDef() + " devido ao cansaço!");
+            usuario.getDef() + " devido ao calor sufocante!");
     }
 }

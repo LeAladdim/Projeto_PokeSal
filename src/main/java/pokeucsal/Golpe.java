@@ -58,16 +58,15 @@ public abstract class Golpe {
 
             String tipoAtacante = atacante.getTipo().getNomeTipo();
             if (climaAtual.equals("Asfalto Quente") && tipoAtacante.equals("Fogo")) {
-                danoCalculado *= 1.15; // +15% de dano para Fogo
+                danoCalculado *= 1.15;
                 System.out.println(" O Asfalto Quente potencializou o golpe de Fogo!");
             } else if (climaAtual.equals("Piso Escorregadio") && tipoAtacante.equals("Água")) {
-                danoCalculado *= 1.10; // +10% de dano para Água
+                danoCalculado *= 1.10;
                 System.out.println(" A Poça de Chuva amplificou o ataque de Água!");
             }
 
             defensor.dano((int) danoCalculado);
 
-            // Chance de 12,5% (1 em 8) de aplicar status elementais (não acumulativo)
             if (Math.random() < 0.125) {
                 if (tipoAtacante.equals("Fogo") && !defensor.isQueimado()) {
                     defensor.setQueimado(true);
@@ -108,7 +107,7 @@ public abstract class Golpe {
             }
             int dano = calcularDanoBruto(atacante);
             defensor.dano(dano);
-            atacante.getTipo().apDb(atacante);
+            defensor.getTipo().apDb(defensor);
         }
     }
 }
