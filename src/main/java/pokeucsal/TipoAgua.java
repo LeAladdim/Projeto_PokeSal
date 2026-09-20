@@ -1,6 +1,19 @@
 package pokeucsal;
 
+/**
+ * Tipo Água: forte contra Fogo e fraco contra Planta.
+ */
 public class TipoAgua implements TipoPoke {
+
+    // Multiplicadores de tipo .
+    private static final double VANTAGEM = 2.0;
+    private static final double DESVANTAGEM = 0.5;
+    private static final double NEUTRO = 1.0;
+
+    // Valores dos golpes .
+    private static final int BONUS_SPD_BUFF = 10;
+    private static final int PENALIDADE_ATK_BUFF = 5;
+    private static final int PENALIDADE_ATK_DEBUFF = 5;
 
     @Override
     public String getNomeTipo() {
@@ -11,32 +24,32 @@ public class TipoAgua implements TipoPoke {
     public double calcMult(final TipoPoke defensor) {
         final String tipoDef = defensor.getNomeTipo();
         if (tipoDef.equals("Fogo")) {
-            return 2.0;
+            return VANTAGEM;
         } else if (tipoDef.equals("Planta")) {
-            return 0.5; // Água é fraco contra Água e Planta
+            return DESVANTAGEM; // Água é fraco contra Água e Planta
         }
-        return 1.0;
+        return NEUTRO;
     }
 
     @Override
     public void apBf(final Pokemon usuario) {
         // As linhas matemáticas abaixo SÃO OBRIGATÓRIAS para o atributo mudar de verdade
-        usuario.setSpd(usuario.getSpd() + 10);
-        usuario.setAtk(usuario.getAtk() - 5);
+        usuario.setSpd(usuario.getSpd() + BONUS_SPD_BUFF);
+        usuario.setAtk(usuario.getAtk() - PENALIDADE_ATK_BUFF);
 
-        System.out.println("Correnteza Ágil! A Velocidade de " + usuario.getNome() +
-            " aumentou para " + usuario.getSpd() + " e o Ataque diminuiu para " +
-            usuario.getAtk() + " Devido ao Esforço Para Nadar!");
-        Batalha.pausar(1500);
+        System.out.println("Correnteza Ágil! A Velocidade de " + usuario.getNome()
+            + " aumentou para " + usuario.getSpd() + " e o Ataque diminuiu para "
+            + usuario.getAtk() + " Devido ao Esforço Para Nadar!");
+        Batalha.pausar(Batalha.PAUSA_CURTA_MS);
     }
 
     @Override
     public void apDb(final Pokemon alvo) {
         // Esta linha subtrai o ataque do oponente
-        alvo.setAtk(alvo.getAtk() - 5);
+        alvo.setAtk(alvo.getAtk() - PENALIDADE_ATK_DEBUFF);
 
-        System.out.println("O Inimigo Está se Afogando! O Ataque de " + alvo.getNome() +
-            " Diminuiu para " + alvo.getAtk() + " Devido ao Sufocamento!");
-        Batalha.pausar(1500);
+        System.out.println("O Inimigo Está se Afogando! O Ataque de " + alvo.getNome()
+            + " Diminuiu para " + alvo.getAtk() + " Devido ao Sufocamento!");
+        Batalha.pausar(Batalha.PAUSA_CURTA_MS);
     }
 }

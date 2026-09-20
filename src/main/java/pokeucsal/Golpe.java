@@ -2,7 +2,27 @@ package pokeucsal;
 
 import java.util.Random;
 
+/**
+ * Golpe base do jogo, com nome e poder base.
+
+ */
 public abstract class Golpe {
+
+    // O sorteio de precisão vai de 0 a 99, então o limite é 100 .
+    private static final int PRECISAO_MAXIMA = 100;
+
+    // O ataque do Pokémon soma 1/10 do valor ao dano bruto .
+    private static final int DIVISOR_ATK = 10;
+
+    // Bônus de dano do terreno .
+    private static final double BONUS_ASFALTO_QUENTE = 1.15;
+    private static final double BONUS_POCA_DE_CHUVA = 1.10;
+
+    // Chance de o golpe elemental causar status: 12,5% .
+    private static final double CHANCE_STATUS = 0.125;
+
+    // Pontos de precisão que o Buff custa .
+    private static final int CUSTO_PRECISAO_BUFF = 10;
 
     protected final String nome;
 
@@ -19,15 +39,18 @@ public abstract class Golpe {
 
     protected boolean errou(final Pokemon atacante) {
         final Random rand = new Random();
-        return rand.nextInt(100) >= atacante.getPrecisao();
+        return rand.nextInt(PRECISAO_MAXIMA) >= atacante.getPrecisao();
     }
 
     protected int calcularDanoBruto(final Pokemon atacante) {
-        return poderBase + (atacante.getAtk() / 10);
+        return poderBase + (atacante.getAtk() / DIVISOR_ATK);
     }
 
     public abstract void executar(Pokemon atacante, Pokemon defensor);
 
+    /**
+     * Golpe Normal: causa dano sem vantagem ou desvantagem de tipo.
+     */
     public static class Normal extends Golpe {
         public Normal(final String nome, final int poderBase) {
             super(nome, poderBase);
@@ -45,11 +68,21 @@ public abstract class Golpe {
         }
     }
 
+    /**
+     * Golpe Elemental: usa a vantagem de tipo, o terreno e pode aplicar status.
+     */
     public static class Elemental extends Golpe {
         public Elemental(final String nome, final int poderBase) {
             super(nome, poderBase);
         }
 
+        /**
+         * Executa o golpe levando em conta o clima (terreno) atual da batalha.
+         *
+         * @param atacante Pokémon que usa o golpe
+         * @param defensor Pokémon que recebe o golpe
+         * @param climaAtual terreno da batalha, por exemplo "Asfalto Quente"
+         */
         public void executar(final Pokemon atacante, final Pokemon defensor,
                              final String climaAtual) {
             System.out.println("\n>>> " + atacante.getNome() + " usou " + nome + "!");
@@ -69,23 +102,23 @@ public abstract class Golpe {
             final String tipoAtacante = atacante.getTipo().getNomeTipo();
 
             if (climaAtual.equals("Asfalto Quente") && tipoAtacante.equals("Fogo")) {
-                danoCalculado *= 1.15;
+                danoCalculado *= BONUS_ASFALTO_QUENTE;
                 System.out.println("O Asfalto Quente Potencializou o Golpe!");
-            } else if (climaAtual.equals("Piso Escorregadio") &&
-                (tipoAtacante.equals("Água") || tipoAtacante.equals("Agua"))) {
-                danoCalculado *= 1.10;
+            } else if (climaAtual.equals("Piso Escorregadio")
+                && (tipoAtacante.equals("Água") || tipoAtacante.equals("Agua"))) {
+                danoCalculado *= BONUS_POCA_DE_CHUVA;
                 System.out.println("A Poça de Chuva Amplificou o Ataque!");
             }
 
             defensor.dano((int) danoCalculado);
 
-            if (Math.random() < 0.125) {
+            if (Math.random() < CHANCE_STATUS) {
                 if (tipoAtacante.equals("Fogo") && !defensor.isQueimado()) {
                     defensor.setQueimado(true);
                 } else if (tipoAtacante.equals("Planta") && !defensor.isEnvenenado()) {
                     defensor.setEnvenenado(true);
-                } else if ((tipoAtacante.equals("Água") || tipoAtacante.equals("Agua")) &&
-                    !defensor.isParalisado()) {
+                } else if ((tipoAtacante.equals("Água") || tipoAtacante.equals("Agua"))
+                    && !defensor.isParalisado()) {
                     defensor.setParalisado(true);
                 }
             }
@@ -97,6 +130,9 @@ public abstract class Golpe {
         }
     }
 
+    /**
+     * Golpe de Buff: melhora o próprio Pokémon, mas custa precisão.
+     */
     public static class Buff extends Golpe {
         public Buff(final String nome) {
             super(nome, 0);
@@ -106,10 +142,13 @@ public abstract class Golpe {
         public void executar(final Pokemon atacante, final Pokemon defensor) {
             System.out.println("\n>>> " + atacante.getNome() + " usou " + nome + "!");
             atacante.getTipo().apBf(atacante);
-            atacante.diminuirPrecisao(10);
+            atacante.diminuirPrecisao(CUSTO_PRECISAO_BUFF);
         }
     }
 
+    /**
+     * Golpe de Debuff: causa dano e piora um atributo do adversário.
+     */
     public static class Debuff extends Golpe {
         public Debuff(final String nome, final int poderBase) {
             super(nome, poderBase);

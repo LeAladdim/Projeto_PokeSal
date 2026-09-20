@@ -3,10 +3,26 @@ package pokeucsal;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * Controla as batalhas (PvE e PvP), o terreno e a ordem dos ataques em cada turno.
+ */
 public class Batalha {
+
+    // Tempos de pausa em milissegundos.
+    // Ficam públicos porque Bag, Main e os tipos também usam.
+    public static final int PAUSA_CURTA_MS = 1500;
+    public static final int PAUSA_LONGA_MS = 2000;
+
+    // O Canteiro Central cura 5% do HP máximo (antes era o número solto 0.05).
+    private static final double CURA_CANTEIRO_CENTRAL = 0.05;
 
     private String climaAtual = "Asfalto Quente";
 
+    /**
+     * Pausa a execução para o jogador conseguir ler as mensagens.
+     *
+     * @param milissegundos tempo da pausa
+     */
     public static void pausar(final int milissegundos) {
         try {
             Thread.sleep(milissegundos);
@@ -15,6 +31,9 @@ public class Batalha {
         }
     }
 
+    /**
+     * Sorteia um terreno diferente do atual (efeito do item Sal Shard).
+     */
     public void mudarTerreno() {
         final String[] climasPossiveis =
             {"Asfalto Quente", "Piso Escorregadio", "Canteiro Central"};
@@ -48,16 +67,22 @@ public class Batalha {
             "\nA Sal Shard brilhou! O Campo de Batalha Agora é O " + this.climaAtual + "!");
     }
 
+    /**
+     * Aplica os efeitos do fim do turno: cura do Canteiro Central e dano de status.
+     *
+     * @param p1 primeiro PokéSal da batalha
+     * @param p2 segundo PokéSal da batalha
+     */
     public void processarFimDeTurno(final Pokemon p1, final Pokemon p2) {
         System.out.println("\n--- Fim de Turno ---");
 
         if (climaAtual.equals("Canteiro Central")) {
             if (p1.getTipo().getNomeTipo().equals("Planta") && p1.getHp() > 0) {
-                p1.curar(0.05);
+                p1.curar(CURA_CANTEIRO_CENTRAL);
                 System.out.println("O Canteiro Central Restaurou a Vida de " + p1.getNome() + "!");
             }
             if (p2.getTipo().getNomeTipo().equals("Planta") && p2.getHp() > 0) {
-                p2.curar(0.05);
+                p2.curar(CURA_CANTEIRO_CENTRAL);
                 System.out.println("O Canteiro Central Restaurou a Vida De " + p2.getNome() + "!");
             }
         }
@@ -70,6 +95,14 @@ public class Batalha {
         }
     }
 
+    /**
+     * Executa os golpes do turno. Quem tem mais velocidade age primeiro.
+     *
+     * @param jogador PokéSal do jogador
+     * @param golpeJogador golpe escolhido pelo jogador
+     * @param inimigo PokéSal adversário
+     * @param golpeInimigo golpe escolhido pelo adversário
+     */
     public void resolverRodadaDeAtaques(final Pokemon jogador, final Golpe golpeJogador,
                                         final Pokemon inimigo, final Golpe golpeInimigo) {
         final Pokemon primeiro;
@@ -88,20 +121,20 @@ public class Batalha {
             segundo = jogador;
             acaoSegundo = golpeJogador;
         }
-        Batalha.pausar(1500);
+        Batalha.pausar(PAUSA_CURTA_MS);
         System.out.println("\n--- Ordem de Ataque ---");
         System.out.println(primeiro.getNome() + " é Mais Rápido e Toma a Frente!");
-        Batalha.pausar(1500);
+        Batalha.pausar(PAUSA_CURTA_MS);
 
         executarGolpeComClima(primeiro, segundo, acaoPrimeiro);
 
         if (segundo.getHp() > 0) {
             System.out.println("\nContra-ataque de " + segundo.getNome() + "!");
-            Batalha.pausar(1500);
+            Batalha.pausar(PAUSA_CURTA_MS);
             executarGolpeComClima(segundo, primeiro, acaoSegundo);
         } else {
             System.out.println("\n" + segundo.getNome() + " Desmaiou Antes de Conseguir Atacar!");
-            Batalha.pausar(1500);
+            Batalha.pausar(PAUSA_CURTA_MS);
         }
 
         processarFimDeTurno(jogador, inimigo);
@@ -116,16 +149,24 @@ public class Batalha {
         }
     }
 
+    /**
+     * Roda uma batalha do modo PvE (jogador contra computador).
+     *
+     * @param jogador PokéSal do jogador
+     * @param inimigo PokéSal adversário
+     * @param mochila mochila de itens do jogador
+     * @return {@code true} se o jogador venceu, senão {@code false}
+     */
     public boolean iniciarCombate(final Pokemon jogador, final Pokemon inimigo, final Bag mochila) {
         mochila.resetarUsoBatalha();
 
         final Scanner sc = new Scanner(System.in);
         System.out.println("\nUm " + inimigo.getNome() + " Adversário se Aproxima!");
-        Batalha.pausar(1500);
+        Batalha.pausar(PAUSA_CURTA_MS);
 
         inimigo.curar(1.0);
         inimigo.exibirSts();
-        Batalha.pausar(1500);
+        Batalha.pausar(PAUSA_CURTA_MS);
 
         final String[] climasPossiveis =
             {"Asfalto Quente", "Piso Escorregadio", "Canteiro Central"};
@@ -147,7 +188,7 @@ public class Batalha {
         }
 
         System.out.println("Condição do Ambiente de Combate: " + climaAtual + "!");
-        Batalha.pausar(2000);
+        Batalha.pausar(PAUSA_LONGA_MS);
 
         while (jogador.getHp() > 0 && inimigo.getHp() > 0) {
             System.out.println("\nHP: " + jogador.getHp() + " | Inimigo: " + inimigo.getHp());
@@ -166,8 +207,8 @@ public class Batalha {
                     int esc = sc.nextInt() - 1;
                     while (esc < 0 || esc >= golpesJogador.length) {
                         System.out.println(
-                            "Opção Inválida! Digite um número entre 1 e " + golpesJogador.length +
-                                ":");
+                            "Opção Inválida! Digite um número entre 1 e " + golpesJogador.length
+                                + ":");
                         esc = sc.nextInt() - 1;
                     }
                     final Golpe golpeEscolhido = golpesJogador[esc];
@@ -184,11 +225,11 @@ public class Batalha {
                     }
                     if (inimigo.getHp() > 0) {
                         System.out.println("\n--- Turno de " + inimigo.getNome() + " ---");
-                        Batalha.pausar(2000);
+                        Batalha.pausar(PAUSA_LONGA_MS);
                         final Golpe golpeResposta =
                             inimigo.getGolpes()[rand.nextInt(inimigo.getGolpes().length)];
                         executarGolpeComClima(inimigo, jogador, golpeResposta);
-                        Batalha.pausar(2000);
+                        Batalha.pausar(PAUSA_LONGA_MS);
                         processarFimDeTurno(jogador, inimigo);
                     }
                     break;
@@ -199,17 +240,25 @@ public class Batalha {
 
         if (jogador.getHp() > 0) {
             System.out.println("Você Venceu a Batalha!");
-            Batalha.pausar(2000);
+            Batalha.pausar(PAUSA_LONGA_MS);
             System.out.print("\u001B[32m");
             return true;
         } else {
             System.out.println("Seu PokeSal Desmaiou...");
-            Batalha.pausar(2000);
+            Batalha.pausar(PAUSA_LONGA_MS);
             System.out.print("\u001B[32m");
             return false;
         }
     }
 
+    /**
+     * Roda uma batalha do modo PvP (jogador contra jogador).
+     *
+     * @param p1 PokéSal do jogador 1
+     * @param p2 PokéSal do jogador 2
+     * @param bag1 mochila do jogador 1
+     * @param bag2 mochila do jogador 2
+     */
     public void iniciarCombatePvP(final Pokemon p1, final Pokemon p2, final Bag bag1,
                                   final Bag bag2) {
         bag1.resetarUsoBatalha();
@@ -217,13 +266,13 @@ public class Batalha {
         final Scanner sc = new Scanner(System.in);
         System.out.println(
             "\nBatalha PvP iniciada entre " + p1.getNome() + " e " + p2.getNome() + "!");
-        Batalha.pausar(2000);
+        Batalha.pausar(PAUSA_LONGA_MS);
 
         p1.exibirSts();
-        Batalha.pausar(2000);
+        Batalha.pausar(PAUSA_LONGA_MS);
 
         p2.exibirSts();
-        Batalha.pausar(2000);
+        Batalha.pausar(PAUSA_LONGA_MS);
 
         final String[] climasPossiveis =
             {"Asfalto Quente", "Piso Escorregadio", "Canteiro Central"};
@@ -268,8 +317,8 @@ public class Batalha {
                         int esc1 = sc.nextInt() - 1;
                         while (esc1 < 0 || esc1 >= golpesP1.length) {
                             System.out.println(
-                                "Opção Inválida! Digite um número entre 1 e " + golpesP1.length +
-                                    ":");
+                                "Opção Inválida! Digite um número entre 1 e " + golpesP1.length
+                                    + ":");
                             esc1 = sc.nextInt() - 1;
                         }
                         golpeP1 = golpesP1[esc1];
@@ -307,8 +356,8 @@ public class Batalha {
                         int esc2 = sc.nextInt() - 1;
                         while (esc2 < 0 || esc2 >= golpesP2.length) {
                             System.out.println(
-                                "Opção Inválida! Digite um número entre 1 e " + golpesP2.length +
-                                    ":");
+                                "Opção Inválida! Digite um número entre 1 e " + golpesP2.length
+                                    + ":");
                             esc2 = sc.nextInt() - 1;
                         }
                         golpeP2 = golpesP2[esc2];
@@ -326,11 +375,11 @@ public class Batalha {
             } else {
                 if (golpeP1 != null && p2.getHp() > 0) {
                     System.out.println("\n--- Turno de " + p1.getNome() + " ---");
-                    Batalha.pausar(1500);
+                    Batalha.pausar(PAUSA_CURTA_MS);
                     executarGolpeComClima(p1, p2, golpeP1);
                 } else if (golpeP2 != null && p1.getHp() > 0) {
                     System.out.println("\n--- Turno de " + p2.getNome() + " ---");
-                    Batalha.pausar(1500);
+                    Batalha.pausar(PAUSA_CURTA_MS);
                     executarGolpeComClima(p2, p1, golpeP2);
                 }
                 processarFimDeTurno(p1, p2);
@@ -339,10 +388,10 @@ public class Batalha {
 
         if (p1.getHp() > 0) {
             System.out.println("Jogador 1 Venceu a Batalha!");
-            Batalha.pausar(2000);
+            Batalha.pausar(PAUSA_LONGA_MS);
         } else {
             System.out.println("Jogador 2 Venceu a Batalha!");
-            Batalha.pausar(2000);
+            Batalha.pausar(PAUSA_LONGA_MS);
         }
         System.out.print("\u001B[32m");
     }
