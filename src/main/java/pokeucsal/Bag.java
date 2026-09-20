@@ -3,7 +3,8 @@ package pokeucsal;
 import java.util.Scanner;
 
 public class Bag {
-    private final int LIMITE_ITENS = 2;
+
+    private static final int LIMITE_ITENS = 2;
 
     private int potion = 1;
 
@@ -17,10 +18,11 @@ public class Bag {
         this.itensUsd = 0;
     }
 
-    public boolean abrirMochila(Pokemon aliado, Batalha arena) {
+    public boolean abrirMochila(final Pokemon aliado, final Batalha arena) {
         if (itensUsd >= LIMITE_ITENS) {
             System.out.println(
                 "\nLimite maximo de " + LIMITE_ITENS + " itens atingido nesta batalha.");
+            Batalha.pausar(1500);
             return false;
         }
 
@@ -33,32 +35,30 @@ public class Bag {
         System.out.println("0 - Voltar");
 
         final int escolha = sc.nextInt();
-        boolean itemUtilizado = false;
 
         if (escolha == 1 && potion > 0) {
             potion--;
             aliado.curar(0.15);
-            itemUtilizado = true;
+            System.out.println("\n>>> " + aliado.getNome() + " usou uma Potion e recuperou vida!");
+            Batalha.pausar(1500);
         } else if (escolha == 2 && superPotion > 0) {
             superPotion--;
             aliado.curar(0.35);
-            itemUtilizado = true;
+            System.out.println(
+                "\n>>> " + aliado.getNome() + " usou uma Super Potion e recuperou bastante vida!");
+            Batalha.pausar(1500);
         } else if (escolha == 3 && salShard > 0) {
             salShard--;
             arena.mudarTerreno(aliado.getTipo().getNomeTipo());
-            itemUtilizado = true;
         } else if (escolha == 0) {
             return false;
         } else {
             System.out.println("Item indisponivel ou escolha invalida.");
+            Batalha.pausar(1500);
             return false;
         }
 
-        if (itemUtilizado) {
-            itensUsd++;
-            return true;
-        }
-
-        return false;
+        itensUsd++;
+        return true;
     }
 }

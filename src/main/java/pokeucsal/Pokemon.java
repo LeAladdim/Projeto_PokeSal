@@ -113,7 +113,7 @@ public class Pokemon {
         this.paralisado = paralisado;
         if (paralisado) {
             this.spd = (int) (this.spd * 0.75); // Reduz SPD em 25%
-            System.out.println(nome + " foi paralisado e sua velocidade caiu!");
+            System.out.println(nome + " foi Paralisado e sua Velocidade Caiu!");
         }
     }
 
@@ -125,7 +125,7 @@ public class Pokemon {
                 this.hp = 0;
             }
             System.out.println(
-                nome + " sofreu " + danoQueimadura + " de dano por queimadura! HP: " + this.hp +
+                nome + " Sofreu " + danoQueimadura + " de Dano por Queimadura! HP: " + this.hp +
                     "/" + maxHp);
         }
         if (envenenado) {
@@ -136,7 +136,7 @@ public class Pokemon {
                 this.hp = 0;
             }
             System.out.println(
-                nome + " sofreu " + danoVeneno + " de dano por veneno acumulado! HP: " + this.hp +
+                nome + " sofreu " + danoVeneno + " de Dano por Veneno Acumulado! HP: " + this.hp +
                     "/" + maxHp);
         }
     }
@@ -146,27 +146,38 @@ public class Pokemon {
         if (this.precisao < 30) {
             this.precisao = 30;
         }
-        System.out.println("A Precisão de " + this.nome + " caiu para " + this.precisao + "%!");
+        System.out.println("A Precisão de " + this.nome + " Caiu Para " + this.precisao + "%!");
     }
 
-    public void dano(int danoBruto) {
-        final int danoEfetivo = Math.max(0, danoBruto - this.def);
-        this.hp -= danoEfetivo;
+    public void dano(final int danoBruto) {
+        // Calcula a mitigação normal de defesa
+        final int danoEfetivo = Math.max(1, danoBruto - (this.def / 4));
+
+        // Ferramenta Anti OTK
+        final int danoMaximoPermitido = (int) (this.maxHp * 0.40);
+        final int danoFinal = Math.min(danoEfetivo, Math.max(1, danoMaximoPermitido));
+
+        this.hp -= danoFinal;
         if (this.hp < 0) {
             this.hp = 0;
         }
         System.out.println(
-            this.nome + " recebeu " + danoEfetivo + " de dano! Vida restante: " + this.hp + "/" +
-                maxHp);
+            this.nome + " recebeu " + danoFinal + " de dano! Vida restante: " + this.hp + "/" +
+                this.maxHp);
     }
 
-    public void curar(double porcentagem) {
-        final int valorCura = (int) (this.maxHp * porcentagem);
-        this.hp += valorCura;
-        if (this.hp > this.maxHp) {
+    public void curar(final double porcentagem) {
+        if (porcentagem >= 1.0) {
             this.hp = this.maxHp;
+        } else {
+            this.hp += (int) (this.maxHp * porcentagem);
+            if (this.hp > this.maxHp) {
+                this.hp = this.maxHp;
+            }
         }
-        System.out.println(this.nome + " recuperou vida! HP atual: " + this.hp + "/" + maxHp);
+        this.queimado = false;
+        this.envenenado = false;
+        this.paralisado = false;
     }
 
     public void exibirSts() {

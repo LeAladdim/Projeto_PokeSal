@@ -18,19 +18,21 @@ public class TipoFogo implements TipoPoke {
     }
 
     @Override
-    public void apBf(Pokemon usuario) {
+    public void apBf(final Pokemon usuario) {
         usuario.setAtk(usuario.getAtk() + 10);
+        usuario.setDef(usuario.getDef() - 5);
         System.out.println("A chama cresce! O Ataque de " + usuario.getNome() + " aumentou para " +
-            usuario.getAtk() + "!");
+            usuario.getAtk() + " e a Defesa diminuiu para " + usuario.getDef() +
+            " devido ao esforco excessivo!");
         Batalha.pausar(1500);
     }
 
     @Override
-    public void apDb(Pokemon usuario) {
-        usuario.setDef(usuario.getDef() - 5);
-        // Texto alterado de "CharSal" para refletir o usuário recebendo o debuff
-        System.out.println("Golpe de risco! A Defesa de " + usuario.getNome() + " diminuiu para " +
-            usuario.getDef() + " devido ao calor sufocante!");
+    public void apDb(final Pokemon alvo) {
+        alvo.setDef(alvo.getDef() - 5);
+        System.out.println("O Inimigo está Super-Aquecido! A Defesa de " + alvo.getNome() + " " +
+            "diminuiu para " +
+            alvo.getDef() + " Devido ao Calor");
         Batalha.pausar(1500);
     }
 }

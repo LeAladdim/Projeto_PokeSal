@@ -19,19 +19,23 @@ public class TipoPlanta implements TipoPoke {
 
     @Override
     public void apBf(Pokemon usuario) {
-        usuario.setDef(usuario.getDef() + 10);
+        usuario.setSpd(usuario.getDef() + 10);
+        usuario.setDef(usuario.getSpd() - 5);
         System.out.println(
-            "Casca mais grossa! A Defesa de " + usuario.getNome() + " aumentou para " +
-                usuario.getDef() + "!");
+            "As Raízes Te Envolvem... " + usuario.getNome() + " aumentou para " +
+                usuario.getDef() + " e a Velocidade Diminuiu Para " + usuario.getSpd() +
+                " Devido as Grossas Raízes!");
         Batalha.pausar(1500);
     }
 
     @Override
-    public void apDb(Pokemon usuario) {
-        usuario.setSpd(usuario.getSpd() - 5);
+    public void apDb(final Pokemon alvo) {
+        alvo.setDef(alvo.getSpd() - 5);
         System.out.println(
-            "Raizes pesadas envolvem o alvo... A Velocidade de " + usuario.getNome() + " " +
-                "diminuiu para " + usuario.getSpd() + "!");
+            "O Inimigo Está Caindo na Areia Movediça! A Velocidade de " + alvo.getNome() +
+                " " +
+                "diminuiu para " +
+                alvo.getSpd() + " Devido ao Pavor!");
         Batalha.pausar(1500);
     }
 }

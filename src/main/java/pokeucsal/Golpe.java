@@ -3,11 +3,12 @@ package pokeucsal;
 import java.util.Random;
 
 public abstract class Golpe {
-    protected String nome;
 
-    protected int poderBase;
+    protected final String nome;
 
-    public Golpe(String nome, int poderBase) {
+    protected final int poderBase;
+
+    public Golpe(final String nome, final int poderBase) {
         this.nome = nome;
         this.poderBase = poderBase;
     }
@@ -16,26 +17,27 @@ public abstract class Golpe {
         return nome;
     }
 
-    protected boolean acertou(Pokemon atacante) {
+    // Resolvido o aviso de "invertido": renomeado para "errou" e invertida a logica matematica
+    protected boolean errou(final Pokemon atacante) {
         final Random rand = new Random();
-        return rand.nextInt(100) < atacante.getPrecisao();
+        return rand.nextInt(100) >= atacante.getPrecisao();
     }
 
-    protected int calcularDanoBruto(Pokemon atacante) {
+    protected int calcularDanoBruto(final Pokemon atacante) {
         return poderBase + (atacante.getAtk() / 10);
     }
 
     public abstract void executar(Pokemon atacante, Pokemon defensor);
 
     public static class Normal extends Golpe {
-        public Normal(String nome, int poderBase) {
+        public Normal(final String nome, final int poderBase) {
             super(nome, poderBase);
         }
 
         @Override
-        public void executar(Pokemon atacante, Pokemon defensor) {
+        public void executar(final Pokemon atacante, final Pokemon defensor) {
             System.out.println("\n>>> " + atacante.getNome() + " usou " + nome + "!");
-            if (!acertou(atacante)) {
+            if (errou(atacante)) {
                 System.out.println("O ataque errou!");
                 return;
             }
@@ -45,33 +47,35 @@ public abstract class Golpe {
     }
 
     public static class Elemental extends Golpe {
-        public Elemental(String nome, int poderBase) {
+        public Elemental(final String nome, final int poderBase) {
             super(nome, poderBase);
         }
 
-        public void executar(Pokemon atacante, Pokemon defensor, String climaAtual) {
+        public void executar(final Pokemon atacante, final Pokemon defensor,
+                             final String climaAtual) {
             System.out.println("\n>>> " + atacante.getNome() + " usou " + nome + "!");
-            if (!acertou(atacante)) {
+            if (errou(atacante)) {
                 System.out.println("O ataque errou!");
                 return;
             }
             final double mult = atacante.getTipo().calcMult(defensor.getTipo());
             if (mult > 1.0) {
-                System.out.println("É super efetivo!");
+                System.out.println("E super efetivo!");
             } else if (mult < 1.0) {
-                System.out.println("Não é muito efetivo...");
+                System.out.println("Nao e muito efetivo...");
             }
 
             double danoCalculado = calcularDanoBruto(atacante) * mult;
 
-
             final String tipoAtacante = atacante.getTipo().getNomeTipo();
+
             if (climaAtual.equals("Asfalto Quente") && tipoAtacante.equals("Fogo")) {
                 danoCalculado *= 1.15;
-                System.out.println(" O Asfalto Quente potencializou o golpe de Fogo!");
-            } else if (climaAtual.equals("Piso Escorregadio") && tipoAtacante.equals("Água")) {
+                System.out.println("O Asfalto Quente potencializou o golpe de Fogo!");
+            } else if (climaAtual.equals("Piso Escorregadio") &&
+                (tipoAtacante.equals("Água") || tipoAtacante.equals("Agua"))) {
                 danoCalculado *= 1.10;
-                System.out.println(" A Poça de Chuva amplificou o ataque de Água!");
+                System.out.println("A Poca de Chuva amplificou o ataque de Agua!");
             }
 
             defensor.dano((int) danoCalculado);
@@ -81,25 +85,26 @@ public abstract class Golpe {
                     defensor.setQueimado(true);
                 } else if (tipoAtacante.equals("Planta") && !defensor.isEnvenenado()) {
                     defensor.setEnvenenado(true);
-                } else if (tipoAtacante.equals("Água") && !defensor.isParalisado()) {
+                } else if ((tipoAtacante.equals("Água") || tipoAtacante.equals("Agua")) &&
+                    !defensor.isParalisado()) {
                     defensor.setParalisado(true);
                 }
             }
         }
 
         @Override
-        public void executar(Pokemon atacante, Pokemon defensor) {
+        public void executar(final Pokemon atacante, final Pokemon defensor) {
             executar(atacante, defensor, "Normal");
         }
     }
 
     public static class Buff extends Golpe {
-        public Buff(String nome) {
+        public Buff(final String nome) {
             super(nome, 0);
         }
 
         @Override
-        public void executar(Pokemon atacante, Pokemon defensor) {
+        public void executar(final Pokemon atacante, final Pokemon defensor) {
             System.out.println("\n>>> " + atacante.getNome() + " usou " + nome + "!");
             atacante.getTipo().apBf(atacante);
             atacante.diminuirPrecisao(10);
@@ -107,20 +112,21 @@ public abstract class Golpe {
     }
 
     public static class Debuff extends Golpe {
-        public Debuff(String nome, int poderBase) {
+        public Debuff(final String nome, final int poderBase) {
             super(nome, poderBase);
         }
 
         @Override
-        public void executar(Pokemon atacante, Pokemon defensor) {
+        public void executar(final Pokemon atacante, final Pokemon defensor) {
             System.out.println("\n>>> " + atacante.getNome() + " usou " + nome + "!");
-            if (!acertou(atacante)) {
+            if (errou(atacante)) {
                 System.out.println("O ataque errou!");
                 return;
             }
             final int dano = calcularDanoBruto(atacante);
             defensor.dano(dano);
-            defensor.getTipo().apDb(defensor);
+
+            atacante.getTipo().apDb(defensor);
         }
     }
 }
