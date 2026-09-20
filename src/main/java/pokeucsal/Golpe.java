@@ -17,7 +17,6 @@ public abstract class Golpe {
         return nome;
     }
 
-    // Resolvido o aviso de "invertido": renomeado para "errou" e invertida a logica matematica
     protected boolean errou(final Pokemon atacante) {
         final Random rand = new Random();
         return rand.nextInt(100) >= atacante.getPrecisao();
@@ -38,7 +37,7 @@ public abstract class Golpe {
         public void executar(final Pokemon atacante, final Pokemon defensor) {
             System.out.println("\n>>> " + atacante.getNome() + " usou " + nome + "!");
             if (errou(atacante)) {
-                System.out.println("O ataque errou!");
+                System.out.println("O Ataque Falhou!");
                 return;
             }
             final int dano = calcularDanoBruto(atacante);
@@ -55,14 +54,14 @@ public abstract class Golpe {
                              final String climaAtual) {
             System.out.println("\n>>> " + atacante.getNome() + " usou " + nome + "!");
             if (errou(atacante)) {
-                System.out.println("O ataque errou!");
+                System.out.println("O Ataque Falhou!");
                 return;
             }
             final double mult = atacante.getTipo().calcMult(defensor.getTipo());
             if (mult > 1.0) {
-                System.out.println("E super efetivo!");
+                System.out.println("É Super Efetivo!");
             } else if (mult < 1.0) {
-                System.out.println("Nao e muito efetivo...");
+                System.out.println("Não é Muito Efetivo...");
             }
 
             double danoCalculado = calcularDanoBruto(atacante) * mult;
@@ -71,11 +70,11 @@ public abstract class Golpe {
 
             if (climaAtual.equals("Asfalto Quente") && tipoAtacante.equals("Fogo")) {
                 danoCalculado *= 1.15;
-                System.out.println("O Asfalto Quente potencializou o golpe de Fogo!");
+                System.out.println("O Asfalto Quente Potencializou o Golpe!");
             } else if (climaAtual.equals("Piso Escorregadio") &&
                 (tipoAtacante.equals("Água") || tipoAtacante.equals("Agua"))) {
                 danoCalculado *= 1.10;
-                System.out.println("A Poca de Chuva amplificou o ataque de Agua!");
+                System.out.println("A Poça de Chuva Amplificou o Ataque!");
             }
 
             defensor.dano((int) danoCalculado);

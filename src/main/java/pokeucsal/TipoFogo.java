@@ -21,9 +21,9 @@ public class TipoFogo implements TipoPoke {
     public void apBf(final Pokemon usuario) {
         usuario.setAtk(usuario.getAtk() + 10);
         usuario.setDef(usuario.getDef() - 5);
-        System.out.println("A chama cresce! O Ataque de " + usuario.getNome() + " aumentou para " +
-            usuario.getAtk() + " e a Defesa diminuiu para " + usuario.getDef() +
-            " devido ao esforco excessivo!");
+        System.out.println("A Chama Cresce! O Ataque de " + usuario.getNome() + " Aumentou Para " +
+            usuario.getAtk() + " e a Defesa Diminuiu para " + usuario.getDef() +
+            " Devido ao Esforço Excessivo!");
         Batalha.pausar(1500);
     }
 

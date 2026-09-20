@@ -24,9 +24,9 @@ public class TipoAgua implements TipoPoke {
         usuario.setSpd(usuario.getSpd() + 10);
         usuario.setAtk(usuario.getAtk() - 5);
 
-        System.out.println("Correnteza agil! A Velocidade de " + usuario.getNome() +
+        System.out.println("Correnteza Ágil! A Velocidade de " + usuario.getNome() +
             " aumentou para " + usuario.getSpd() + " e o Ataque diminuiu para " +
-            usuario.getAtk() + " devido ao esforco para nadar!");
+            usuario.getAtk() + " Devido ao Esforço Para Nadar!");
         Batalha.pausar(1500);
     }
 
@@ -35,7 +35,7 @@ public class TipoAgua implements TipoPoke {
         // Esta linha subtrai o ataque do oponente
         alvo.setAtk(alvo.getAtk() - 5);
 
-        System.out.println("O inimigo Está se Afogando! O Ataque de " + alvo.getNome() +
+        System.out.println("O Inimigo Está se Afogando! O Ataque de " + alvo.getNome() +
             " Diminuiu para " + alvo.getAtk() + " Devido ao Sufocamento!");
         Batalha.pausar(1500);
     }

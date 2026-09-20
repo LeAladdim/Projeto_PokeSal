@@ -9,6 +9,12 @@ public class Pokemon {
 
     private final Golpe[] golpes;
 
+    private final int baseAtk;
+
+    private final int baseDef;
+
+    private final int baseSpd;
+
     private int atk;
 
     private int def;
@@ -27,7 +33,8 @@ public class Pokemon {
 
     private int turnosEnvenenado = 0;
 
-    public Pokemon(String nome, TipoPoke tipo, int atk, int def, int hp, int spd, Golpe[] golpes) {
+    public Pokemon(final String nome, final TipoPoke tipo, final int atk, final int def,
+                   final int hp, final int spd, final Golpe[] golpes) {
         this.nome = nome;
         this.tipo = tipo;
         this.atk = atk;
@@ -36,6 +43,9 @@ public class Pokemon {
         this.maxHp = hp;
         this.spd = spd;
         this.golpes = golpes;
+        this.baseAtk = atk;
+        this.baseDef = def;
+        this.baseSpd = spd;
     }
 
     public String getNome() {
@@ -50,7 +60,7 @@ public class Pokemon {
         return atk;
     }
 
-    public void setAtk(int atk) {
+    public void setAtk(final int atk) {
         this.atk = atk;
     }
 
@@ -58,7 +68,7 @@ public class Pokemon {
         return def;
     }
 
-    public void setDef(int def) {
+    public void setDef(final int def) {
         this.def = def;
     }
 
@@ -70,7 +80,7 @@ public class Pokemon {
         return spd;
     }
 
-    public void setSpd(int spd) {
+    public void setSpd(final int spd) {
         this.spd = spd;
     }
 
@@ -82,11 +92,12 @@ public class Pokemon {
         return golpes;
     }
 
+
     public boolean isQueimado() {
         return queimado;
     }
 
-    public void setQueimado(boolean queimado) {
+    public void setQueimado(final boolean queimado) {
         this.queimado = queimado;
         if (queimado) {
             System.out.println(nome + " foi queimado!");
@@ -97,7 +108,7 @@ public class Pokemon {
         return envenenado;
     }
 
-    public void setEnvenenado(boolean envenenado) {
+    public void setEnvenenado(final boolean envenenado) {
         this.envenenado = envenenado;
         if (envenenado) {
             this.turnosEnvenenado = 0;
@@ -109,10 +120,10 @@ public class Pokemon {
         return paralisado;
     }
 
-    public void setParalisado(boolean paralisado) {
+    public void setParalisado(final boolean paralisado) {
         this.paralisado = paralisado;
         if (paralisado) {
-            this.spd = (int) (this.spd * 0.75); // Reduz SPD em 25%
+            this.spd = (int) (this.spd * 0.75);
             System.out.println(nome + " foi Paralisado e sua Velocidade Caiu!");
         }
     }
@@ -136,12 +147,12 @@ public class Pokemon {
                 this.hp = 0;
             }
             System.out.println(
-                nome + " sofreu " + danoVeneno + " de Dano por Veneno Acumulado! HP: " + this.hp +
+                nome + " Sofreu " + danoVeneno + " de Dano por Veneno Acumulado! HP: " + this.hp +
                     "/" + maxHp);
         }
     }
 
-    public void diminuirPrecisao(int valor) {
+    public void diminuirPrecisao(final int valor) {
         this.precisao -= valor;
         if (this.precisao < 30) {
             this.precisao = 30;
@@ -150,11 +161,8 @@ public class Pokemon {
     }
 
     public void dano(final int danoBruto) {
-        // Calcula a mitigação normal de defesa
         final int danoEfetivo = Math.max(1, danoBruto - (this.def / 4));
-
-        // Ferramenta Anti OTK
-        final int danoMaximoPermitido = (int) (this.maxHp * 0.40);
+        final int danoMaximoPermitido = (int) (this.maxHp * 0.45);
         final int danoFinal = Math.min(danoEfetivo, Math.max(1, danoMaximoPermitido));
 
         this.hp -= danoFinal;
@@ -166,9 +174,20 @@ public class Pokemon {
                 this.maxHp);
     }
 
+    public void curarStatus() {
+        this.queimado = false;
+        this.envenenado = false;
+        this.paralisado = false;
+        this.turnosEnvenenado = 0;
+    }
+
     public void curar(final double porcentagem) {
         if (porcentagem >= 1.0) {
             this.hp = this.maxHp;
+            this.atk = this.baseAtk;
+            this.def = this.baseDef;
+            this.spd = this.baseSpd;
+            this.precisao = 100;
         } else {
             this.hp += (int) (this.maxHp * porcentagem);
             if (this.hp > this.maxHp) {
@@ -178,6 +197,7 @@ public class Pokemon {
         this.queimado = false;
         this.envenenado = false;
         this.paralisado = false;
+        this.turnosEnvenenado = 0;
     }
 
     public void exibirSts() {

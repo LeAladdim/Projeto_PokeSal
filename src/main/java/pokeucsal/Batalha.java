@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Batalha {
 
-    private String climaAtual = "Normal";
+    private String climaAtual = "Asfalto Quente";
 
     public static void pausar(final int milissegundos) {
         try {
@@ -15,24 +15,37 @@ public class Batalha {
         }
     }
 
-    public void mudarTerreno(final String novoTerreno) {
-        switch (novoTerreno) {
-            case "Fogo":
-                this.climaAtual = "Asfalto Quente";
+    public void mudarTerreno() {
+        final String[] climasPossiveis =
+            {"Asfalto Quente", "Piso Escorregadio", "Canteiro Central"};
+        final String[] opcoes = new String[2];
+        int idx = 0;
+
+        for (final String clima : climasPossiveis) {
+            if (!clima.equals(this.climaAtual)) {
+                opcoes[idx] = clima;
+                idx++;
+            }
+        }
+
+        final Random rand = new Random();
+        this.climaAtual = opcoes[rand.nextInt(2)];
+
+        switch (this.climaAtual) {
+            case "Asfalto Quente":
+                System.out.print("\u001B[31m");
                 break;
-            case "Agua":
-            case "Água":
-                this.climaAtual = "Piso Escorregadio";
+            case "Piso Escorregadio":
+                System.out.print("\u001B[34m");
                 break;
-            case "Planta":
-                this.climaAtual = "Canteiro Central";
+            case "Canteiro Central":
+                System.out.print("\u001B[32m");
                 break;
             default:
-                this.climaAtual = novoTerreno;
                 break;
         }
         System.out.println(
-            "\nO Sal Shard brilhou! O campo de batalha agora e o " + this.climaAtual + "!");
+            "\nA Sal Shard brilhou! O Campo de Batalha Agora é O " + this.climaAtual + "!");
     }
 
     public void processarFimDeTurno(final Pokemon p1, final Pokemon p2) {
@@ -41,9 +54,11 @@ public class Batalha {
         if (climaAtual.equals("Canteiro Central")) {
             if (p1.getTipo().getNomeTipo().equals("Planta") && p1.getHp() > 0) {
                 p1.curar(0.05);
+                System.out.println("O Canteiro Central Restaurou a Vida de " + p1.getNome() + "!");
             }
             if (p2.getTipo().getNomeTipo().equals("Planta") && p2.getHp() > 0) {
                 p2.curar(0.05);
+                System.out.println("O Canteiro Central Restaurou a Vida De " + p2.getNome() + "!");
             }
         }
 
@@ -74,20 +89,18 @@ public class Batalha {
             acaoSegundo = golpeJogador;
         }
         Batalha.pausar(1500);
-        System.out.println("\n--- Ordem de Ataque (Baseada em SPD) ---");
-        System.out.println(primeiro.getNome() + " e mais rapido e age primeiro!");
+        System.out.println("\n--- Ordem de Ataque ---");
+        System.out.println(primeiro.getNome() + " é Mais Rápido e Toma a Frente!");
         Batalha.pausar(1500);
 
-        // Executa o primeiro e imprime o dano/efeito imediatamente
         executarGolpeComClima(primeiro, segundo, acaoPrimeiro);
 
-        // O segundo só ataca se sobreviveu ao primeiro impacto
         if (segundo.getHp() > 0) {
             System.out.println("\nContra-ataque de " + segundo.getNome() + "!");
             Batalha.pausar(1500);
             executarGolpeComClima(segundo, primeiro, acaoSegundo);
         } else {
-            System.out.println("\n" + segundo.getNome() + " desmaiou antes de conseguir atacar!");
+            System.out.println("\n" + segundo.getNome() + " Desmaiou Antes de Conseguir Atacar!");
             Batalha.pausar(1500);
         }
 
@@ -104,23 +117,36 @@ public class Batalha {
     }
 
     public boolean iniciarCombate(final Pokemon jogador, final Pokemon inimigo, final Bag mochila) {
-        // Garante que o uso dos itens da mochila é totalmente resetado no início de cada luta
         mochila.resetarUsoBatalha();
 
         final Scanner sc = new Scanner(System.in);
-        System.out.println("\nUm " + inimigo.getNome() + " adversario se aproxima!");
+        System.out.println("\nUm " + inimigo.getNome() + " Adversário se Aproxima!");
         Batalha.pausar(1500);
 
-        // Exibe os status do Pokemon inimigo selvagem
+        inimigo.curar(1.0);
         inimigo.exibirSts();
         Batalha.pausar(1500);
 
         final String[] climasPossiveis =
-            {"Normal", "Asfalto Quente", "Piso Escorregadio", "Canteiro Central"};
+            {"Asfalto Quente", "Piso Escorregadio", "Canteiro Central"};
         final Random rand = new Random();
         this.climaAtual = climasPossiveis[rand.nextInt(climasPossiveis.length)];
 
-        System.out.println("Condicao do ambiente de combate: " + climaAtual + "!");
+        switch (this.climaAtual) {
+            case "Asfalto Quente":
+                System.out.print("\u001B[31m");
+                break;
+            case "Piso Escorregadio":
+                System.out.print("\u001B[34m");
+                break;
+            case "Canteiro Central":
+                System.out.print("\u001B[32m");
+                break;
+            default:
+                break;
+        }
+
+        System.out.println("Condição do Ambiente de Combate: " + climaAtual + "!");
         Batalha.pausar(2000);
 
         while (jogador.getHp() > 0 && inimigo.getHp() > 0) {
@@ -129,48 +155,57 @@ public class Batalha {
             System.out.println("2 - Mochila");
             final int acao = sc.nextInt();
 
-            if (acao == 1) {
-                System.out.println("\nEscolha um golpe:");
-                final Golpe[] golpesJogador = jogador.getGolpes();
-                for (int i = 0; i < golpesJogador.length; i++) {
-                    System.out.println((i + 1) + " - " + golpesJogador[i].getNome());
-                }
-                Batalha.pausar(1500);
-                int esc = sc.nextInt() - 1;
-                if (esc < 0 || esc >= golpesJogador.length) {
-                    esc = 0;
-                }
-                final Golpe golpeEscolhido = golpesJogador[esc];
+            switch (acao) {
+                case 1:
+                    System.out.println("\nEscolha um Golpe:");
+                    final Golpe[] golpesJogador = jogador.getGolpes();
+                    for (int i = 0; i < golpesJogador.length; i++) {
+                        System.out.println((i + 1) + " - " + golpesJogador[i].getNome());
+                    }
 
-                final Golpe golpeInimigo =
-                    inimigo.getGolpes()[rand.nextInt(inimigo.getGolpes().length)];
+                    int esc = sc.nextInt() - 1;
+                    while (esc < 0 || esc >= golpesJogador.length) {
+                        System.out.println(
+                            "Opção Inválida! Digite um número entre 1 e " + golpesJogador.length +
+                                ":");
+                        esc = sc.nextInt() - 1;
+                    }
+                    final Golpe golpeEscolhido = golpesJogador[esc];
 
-                resolverRodadaDeAtaques(jogador, golpeEscolhido, inimigo, golpeInimigo);
-
-            } else if (acao == 2) {
-                final boolean turnoConsumido = mochila.abrirMochila(jogador, this);
-                if (!turnoConsumido) {
-                    continue;
-                }
-                if (inimigo.getHp() > 0) {
-                    System.out.println("\nTurno do Inimigo:");
-                    Batalha.pausar(2000);
                     final Golpe golpeInimigo =
                         inimigo.getGolpes()[rand.nextInt(inimigo.getGolpes().length)];
-                    executarGolpeComClima(inimigo, jogador, golpeInimigo);
-                    Batalha.pausar(2000);
-                    processarFimDeTurno(jogador, inimigo);
-                }
+
+                    resolverRodadaDeAtaques(jogador, golpeEscolhido, inimigo, golpeInimigo);
+                    break;
+                case 2:
+                    final boolean turnoConsumido = mochila.abrirMochila(jogador, this);
+                    if (!turnoConsumido) {
+                        continue;
+                    }
+                    if (inimigo.getHp() > 0) {
+                        System.out.println("\n--- Turno de " + inimigo.getNome() + " ---");
+                        Batalha.pausar(2000);
+                        final Golpe golpeResposta =
+                            inimigo.getGolpes()[rand.nextInt(inimigo.getGolpes().length)];
+                        executarGolpeComClima(inimigo, jogador, golpeResposta);
+                        Batalha.pausar(2000);
+                        processarFimDeTurno(jogador, inimigo);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
 
         if (jogador.getHp() > 0) {
-            System.out.println("Voce venceu a batalha!");
+            System.out.println("Você Venceu a Batalha!");
             Batalha.pausar(2000);
+            System.out.print("\u001B[32m");
             return true;
         } else {
-            System.out.println("Seu Pokemon desmaiou...");
+            System.out.println("Seu PokeSal Desmaiou...");
             Batalha.pausar(2000);
+            System.out.print("\u001B[32m");
             return false;
         }
     }
@@ -184,7 +219,6 @@ public class Batalha {
             "\nBatalha PvP iniciada entre " + p1.getNome() + " e " + p2.getNome() + "!");
         Batalha.pausar(2000);
 
-        // Exibe os status de ambos os Pokémon no PvP
         p1.exibirSts();
         Batalha.pausar(2000);
 
@@ -192,13 +226,25 @@ public class Batalha {
         Batalha.pausar(2000);
 
         final String[] climasPossiveis =
-            {"Normal", "Asfalto Quente", "Piso Escorregadio", "Canteiro Central"};
+            {"Asfalto Quente", "Piso Escorregadio", "Canteiro Central"};
         final Random rand = new Random();
         this.climaAtual = climasPossiveis[rand.nextInt(climasPossiveis.length)];
 
-        if (!climaAtual.equals("Normal")) {
-            System.out.println("Condicao do Ambiente de Combate: " + climaAtual + "!");
+        switch (this.climaAtual) {
+            case "Asfalto Quente":
+                System.out.print("\u001B[31m");
+                break;
+            case "Piso Escorregadio":
+                System.out.print("\u001B[34m");
+                break;
+            case "Canteiro Central":
+                System.out.print("\u001B[32m");
+                break;
+            default:
+                break;
         }
+
+        System.out.println("Condição do Ambiente de Combate: " + climaAtual + "!");
 
         while (p1.getHp() > 0 && p2.getHp() > 0) {
             Golpe golpeP1 = null;
@@ -211,20 +257,28 @@ public class Batalha {
                 System.out.println("2 - Mochila");
                 final int acao1 = sc.nextInt();
 
-                if (acao1 == 1) {
-                    System.out.println("\nP1, escolha um golpe:");
-                    Batalha.pausar(1000);
-                    final Golpe[] golpesP1 = p1.getGolpes();
-                    for (int i = 0; i < golpesP1.length; i++) {
-                        System.out.println((i + 1) + " - " + golpesP1[i].getNome());
-                    }
-                    int esc1 = sc.nextInt() - 1;
-                    if (esc1 < 0 || esc1 >= golpesP1.length) {
-                        esc1 = 0;
-                    }
-                    golpeP1 = golpesP1[esc1];
-                } else if (acao1 == 2) {
-                    turnoP1Consumido = bag1.abrirMochila(p1, this);
+                switch (acao1) {
+                    case 1:
+                        System.out.println("\nP1, Escolha um Golpe:");
+                        final Golpe[] golpesP1 = p1.getGolpes();
+                        for (int i = 0; i < golpesP1.length; i++) {
+                            System.out.println((i + 1) + " - " + golpesP1[i].getNome());
+                        }
+
+                        int esc1 = sc.nextInt() - 1;
+                        while (esc1 < 0 || esc1 >= golpesP1.length) {
+                            System.out.println(
+                                "Opção Inválida! Digite um número entre 1 e " + golpesP1.length +
+                                    ":");
+                            esc1 = sc.nextInt() - 1;
+                        }
+                        golpeP1 = golpesP1[esc1];
+                        break;
+                    case 2:
+                        turnoP1Consumido = bag1.abrirMochila(p1, this);
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -242,20 +296,28 @@ public class Batalha {
                 System.out.println("2 - Mochila");
                 final int acao2 = sc.nextInt();
 
-                if (acao2 == 1) {
-                    System.out.println("\nP2, escolha um golpe:");
-                    Batalha.pausar(1000);
-                    final Golpe[] golpesP2 = p2.getGolpes();
-                    for (int i = 0; i < golpesP2.length; i++) {
-                        System.out.println((i + 1) + " - " + golpesP2[i].getNome());
-                    }
-                    int esc2 = sc.nextInt() - 1;
-                    if (esc2 < 0 || esc2 >= golpesP2.length) {
-                        esc2 = 0;
-                    }
-                    golpeP2 = golpesP2[esc2];
-                } else if (acao2 == 2) {
-                    turnoP2Consumido = bag2.abrirMochila(p2, this);
+                switch (acao2) {
+                    case 1:
+                        System.out.println("\nP2, Escolha um Golpe:");
+                        final Golpe[] golpesP2 = p2.getGolpes();
+                        for (int i = 0; i < golpesP2.length; i++) {
+                            System.out.println((i + 1) + " - " + golpesP2[i].getNome());
+                        }
+
+                        int esc2 = sc.nextInt() - 1;
+                        while (esc2 < 0 || esc2 >= golpesP2.length) {
+                            System.out.println(
+                                "Opção Inválida! Digite um número entre 1 e " + golpesP2.length +
+                                    ":");
+                            esc2 = sc.nextInt() - 1;
+                        }
+                        golpeP2 = golpesP2[esc2];
+                        break;
+                    case 2:
+                        turnoP2Consumido = bag2.abrirMochila(p2, this);
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -263,10 +325,12 @@ public class Batalha {
                 resolverRodadaDeAtaques(p1, golpeP1, p2, golpeP2);
             } else {
                 if (golpeP1 != null && p2.getHp() > 0) {
-                    System.out.println("\n" + p1.getNome() + " ataca!");
+                    System.out.println("\n--- Turno de " + p1.getNome() + " ---");
+                    Batalha.pausar(1500);
                     executarGolpeComClima(p1, p2, golpeP1);
                 } else if (golpeP2 != null && p1.getHp() > 0) {
-                    System.out.println("\n" + p2.getNome() + " ataca!");
+                    System.out.println("\n--- Turno de " + p2.getNome() + " ---");
+                    Batalha.pausar(1500);
                     executarGolpeComClima(p2, p1, golpeP2);
                 }
                 processarFimDeTurno(p1, p2);
@@ -274,11 +338,12 @@ public class Batalha {
         }
 
         if (p1.getHp() > 0) {
-            System.out.println("Jogador 1 venceu a batalha!");
+            System.out.println("Jogador 1 Venceu a Batalha!");
             Batalha.pausar(2000);
         } else {
-            System.out.println("Jogador 2 venceu a batalha!");
+            System.out.println("Jogador 2 Venceu a Batalha!");
             Batalha.pausar(2000);
         }
+        System.out.print("\u001B[32m");
     }
 }
