@@ -23,7 +23,6 @@ public class Main {
      * Inicia o jogo.
      */
     public static void main(final String[] args) {
-        System.out.print("\u001B[32m");
         menuP();
     }
 
