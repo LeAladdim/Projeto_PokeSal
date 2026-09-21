@@ -9,11 +9,9 @@ public class Bag {
 
     private static final int LIMITE_ITENS = 2;
 
-    // Porcentagem de cura de cada poção .
     private static final double CURA_POTION = 0.15;
     private static final double CURA_SUPER_POTION = 0.35;
 
-    // Números do menu para os itens que não são 1 nem 2 .
     private static final int OPCAO_ANTIDOTO = 3;
     private static final int OPCAO_SAL_SHARD = 4;
 
