@@ -8,7 +8,6 @@ import java.util.Scanner;
  */
 public class Main {
 
-    // Números do menu de escolha do Pokémon .
     private static final int ESCOLHA_BULBASAL = 1;
     private static final int ESCOLHA_CHARSAL = 2;
     private static final int ESCOLHA_SQUIRTSAL = 3;
@@ -16,7 +15,6 @@ public class Main {
     private static final int ESCOLHA_CYNDASAL = 5;
     private static final int ESCOLHA_TOTOSAL = 6;
 
-    // Opção "Desistir e ir para casa" .
     private static final int OPCAO_DESISTIR = 3;
 
     /**
@@ -91,14 +89,14 @@ public class Main {
 
             if (modoJogo == 2) {
                 System.out.println("" +
-                         "┌─────────────────────────────────────────────────────────┐\n"
-                        +"│                  SELEÇÃO DO JOGADOR 1                   │\n"
-                        +"└─────────────────────────────────────────────────────────┘\n"
-                        +"   1. BulbaSal                   4. ChikoSal\n"
-                        +"   2. CharSal                    5. CyndaSal\n"
-                        +"   3. SquirtSal                  6. TotoSal\n"
-                        +"───────────────────────────────────────────────────────────\n"
-                        +"> Escolha seu Pokésal:");
+             "┌─────────────────────────────────────────────────────────┐\n"
+            +"│                  SELEÇÃO DO JOGADOR 1                   │\n"
+            +"└─────────────────────────────────────────────────────────┘\n"
+            +"   1. BulbaSal                   4. ChikoSal\n"
+            +"   2. CharSal                    5. CyndaSal\n"
+            +"   3. SquirtSal                  6. TotoSal\n"
+            +"───────────────────────────────────────────────────────────\n"
+            +"> Escolha seu Pokésal:");
                 final int p1Escolha = sc.nextInt();
                 Pokemon p1 = null;
                 if (p1Escolha == ESCOLHA_BULBASAL) {
@@ -115,15 +113,15 @@ public class Main {
                     p1 = totosal;
                 }
 
-                System.out.println("" +
-                         "┌─────────────────────────────────────────────────────────┐\n"
-                        +"│                  SELEÇÃO DO JOGADOR 2                  │\n"
-                        +"└─────────────────────────────────────────────────────────┘\n"
-                        +"   1. BulbaSal                   4. ChikoSal\n"
-                        +"   2. CharSal                    5. CyndaSal\n"
-                        +"   3. SquirtSal                  6. TotoSal\n"
-                        +"───────────────────────────────────────────────────────────\n"
-                        +"> Escolha seu Pokésal:");
+                System.out.println(
+                 "┌─────────────────────────────────────────────────────────┐\n"
+                +"│                  SELEÇÃO DO JOGADOR 2                  │\n"
+                +"└─────────────────────────────────────────────────────────┘\n"
+                +"   1. BulbaSal                   4. ChikoSal\n"
+                +"   2. CharSal                    5. CyndaSal\n"
+                +"   3. SquirtSal                  6. TotoSal\n"
+                +"───────────────────────────────────────────────────────────\n"
+                +"> Escolha seu Pokésal:");
                 final int p2Escolha = sc.nextInt();
                 Pokemon p2 = null;
                 if (p2Escolha == ESCOLHA_BULBASAL) {

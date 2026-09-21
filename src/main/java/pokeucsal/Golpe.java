@@ -4,24 +4,19 @@ import java.util.Random;
 
 /**
  * Golpe base do jogo, com nome e poder base.
-
  */
 public abstract class Golpe {
 
-    // O sorteio de precisão vai de 0 a 99, então o limite é 100 .
     private static final int PRECISAO_MAXIMA = 100;
 
-    // O ataque do Pokémon soma 1/10 do valor ao dano bruto .
+
     private static final int DIVISOR_ATK = 10;
 
-    // Bônus de dano do terreno .
     private static final double BONUS_ASFALTO_QUENTE = 1.15;
     private static final double BONUS_POCA_DE_CHUVA = 1.10;
 
-    // Chance de o golpe elemental causar status: 12,5% .
     private static final double CHANCE_STATUS = 0.125;
 
-    // Pontos de precisão que o Buff custa .
     private static final int CUSTO_PRECISAO_BUFF = 10;
 
     protected final String nome;

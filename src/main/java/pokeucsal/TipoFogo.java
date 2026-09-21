@@ -5,12 +5,10 @@ package pokeucsal;
  */
 public class TipoFogo implements TipoPoke {
 
-    // Multiplicadores de tipo .
     private static final double VANTAGEM = 2.0;
     private static final double DESVANTAGEM = 0.5;
     private static final double NEUTRO = 1.0;
 
-    // Valores dos golpes .
     private static final int BONUS_ATK_BUFF = 10;
     private static final int PENALIDADE_DEF_BUFF = 5;
     private static final int PENALIDADE_DEF_DEBUFF = 5;
