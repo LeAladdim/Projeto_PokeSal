@@ -212,7 +212,7 @@ public class Pokemon {
     public void dano(final int danoBruto) {
         final int danoEfetivo = Math.max(1, danoBruto - (this.def / 4));
         final int danoMaximoPermitido = (int) (this.maxHp * 0.45);
-        final int danoFinal = Math.min(danoEfetivo, Math.max(1, danoMaximoPermitido));
+        final int danoFinal = Math.clamp(danoEfetivo, 1, danoMaximoPermitido);
 
         this.hp -= danoFinal;
         if (this.hp < 0) {
