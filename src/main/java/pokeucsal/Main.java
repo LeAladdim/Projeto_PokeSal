@@ -78,17 +78,28 @@ public class Main {
             }
 
             System.out.println(
-                "******** O Torneio do Estacionamento da UCSal Está para Começar! ***********");
-            System.out.println("Escolha o modo de jogo:");
-            System.out.println("1 - Jogador vs Computador");
-            System.out.println("2 - Jogador vs Jogador");
+                "╔══════════════════════════════════════════════════════════╗\n"
+                +"║    *** O TORNEIO DO ESTACIONAMENTO DA UCSAL ***          ║\n"
+                +"║                 ESTÁ PARA COMEÇAR!                       ║\n"
+                +"╚══════════════════════════════════════════════════════════╝\n"
+                +"\n"
+                +"  1 - Jogador vs Computador (PvE)\n"
+                +"  2 - Jogador vs Jogador (PvP)\n"
+                +"\n"
+                +"───────────────────────────────────────────────────────────\n"
+                +"> Escolha o modo de jogo:");
             final int modoJogo = sc.nextInt();
 
             if (modoJogo == 2) {
-                System.out.println("\n--- Seleção do Jogador 1 ---");
-                System.out.println(
-                    "1- BulbaSal | 2- CharSal | 3- SquirtSal | 4- ChikoSal | 5- CyndaSal |"
-                        + " 6- TotoSal");
+                System.out.println("" +
+                         "┌─────────────────────────────────────────────────────────┐\n"
+                        +"│                  SELEÇÃO DO JOGADOR 1                   │\n"
+                        +"└─────────────────────────────────────────────────────────┘\n"
+                        +"   1. BulbaSal                   4. ChikoSal\n"
+                        +"   2. CharSal                    5. CyndaSal\n"
+                        +"   3. SquirtSal                  6. TotoSal\n"
+                        +"───────────────────────────────────────────────────────────\n"
+                        +"> Escolha seu Pokésal:");
                 final int p1Escolha = sc.nextInt();
                 Pokemon p1 = null;
                 if (p1Escolha == ESCOLHA_BULBASAL) {
@@ -105,10 +116,15 @@ public class Main {
                     p1 = totosal;
                 }
 
-                System.out.println("\n--- Seleção do Jogador 2 ---");
-                System.out.println(
-                    "1- BulbaSal | 2- CharSal | 3- SquirtSal | 4- ChikoSal | 5- CyndaSal |"
-                        + " 6- TotoSal");
+                System.out.println("" +
+                         "┌─────────────────────────────────────────────────────────┐\n"
+                        +"│                  SELEÇÃO DO JOGADOR 2                  │\n"
+                        +"└─────────────────────────────────────────────────────────┘\n"
+                        +"   1. BulbaSal                   4. ChikoSal\n"
+                        +"   2. CharSal                    5. CyndaSal\n"
+                        +"   3. SquirtSal                  6. TotoSal\n"
+                        +"───────────────────────────────────────────────────────────\n"
+                        +"> Escolha seu Pokésal:");
                 final int p2Escolha = sc.nextInt();
                 Pokemon p2 = null;
                 if (p2Escolha == ESCOLHA_BULBASAL) {
@@ -144,15 +160,16 @@ public class Main {
                 }
 
             } else if (modoJogo == 1) {
-                System.out.println("******** O Torneio Esta para Comecar Treinador ***********");
-                System.out.println("********** Rapido, Escolha Seu Inicial! ************");
-                System.out.println("(1- BulbaSal)");
-                System.out.println("(2- CharSal)");
-                System.out.println("(3- SquirtSal)");
-                System.out.println("(4- ChikoSal)");
-                System.out.println("(5- CyndaSal)");
-                System.out.println("(6- TotoSal)");
-                System.out.println("(Digite o Numero do Seu PokeSal)");
+                System.out.println("" +
+                        "*====================================================\n"
+                        +"        O TORNEIO ESTÁ PARA COMEÇAR, TREINADOR!     \n"
+                        +"            Rápido, escolha seu inicial:            \n"
+                        +"====================================================\n"
+                        +"  [1] BulbaSal              [4] ChikoSal\n"
+                        +"  [2] CharSal               [5] CyndaSal\n"
+                        +"  [3] SquirtSal             [6] TotoSal\n"
+                        +"----------------------------------------------------\n"
+                        +">> Digite o número do seu Pokésal:");
 
                 final int poke = sc.nextInt();
                 Pokemon pokeEsc = null;
