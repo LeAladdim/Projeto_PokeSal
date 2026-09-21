@@ -8,12 +8,9 @@ import java.util.Scanner;
  */
 public class Batalha {
 
-    // Tempos de pausa em milissegundos.
-    // Ficam públicos porque Bag, Main e os tipos também usam.
     public static final int PAUSA_CURTA_MS = 1500;
     public static final int PAUSA_LONGA_MS = 2000;
 
-    // O Canteiro Central cura 5% do HP máximo .
     private static final double CURA_CANTEIRO_CENTRAL = 0.05;
 
     private String climaAtual = "Asfalto Quente";
