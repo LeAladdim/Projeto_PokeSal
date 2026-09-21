@@ -4,11 +4,11 @@ package pokeucsal;
  * Representa um Pokésal em batalha, com atributos, golpes, status e precisão.
  */
 public class Pokemon {
-    // Precisão máxima e mínima em % (antes eram os números soltos 100 e 30).
+    // Precisão máxima e mínima em %.
     private static final int PRECISAO_MAXIMA = 100;
     private static final int PRECISAO_MINIMA = 30;
 
-    // Paralisia deixa a velocidade em 75% do valor (antes era o número solto 0.75).
+    // Paralisia deixa a velocidade em 75% do valor.
     private static final double FATOR_PARALISIA = 0.75;
 
     private final String nome;
