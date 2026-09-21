@@ -31,7 +31,6 @@ public class TipoAgua implements TipoPoke {
 
     @Override
     public void apBf(final Pokemon usuario) {
-        // As linhas matemáticas abaixo SÃO OBRIGATÓRIAS para o atributo mudar de verdade
         usuario.setSpd(usuario.getSpd() + BONUS_SPD_BUFF);
         usuario.setAtk(usuario.getAtk() - PENALIDADE_ATK_BUFF);
 
@@ -43,7 +42,6 @@ public class TipoAgua implements TipoPoke {
 
     @Override
     public void apDb(final Pokemon alvo) {
-        // Esta linha subtrai o ataque do oponente
         alvo.setAtk(alvo.getAtk() - PENALIDADE_ATK_DEBUFF);
 
         System.out.println("O Inimigo Está se Afogando! O Ataque de " + alvo.getNome()
