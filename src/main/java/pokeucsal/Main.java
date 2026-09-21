@@ -78,14 +78,14 @@ public class Main {
             }
 
             System.out.println(
-                "******** O Torneio do Estacionamento da UCSal Esta para Comecar! ***********");
+                "******** O Torneio do Estacionamento da UCSal Está para Começar! ***********");
             System.out.println("Escolha o modo de jogo:");
-            System.out.println("1 - Jogador vs Computador (PvE)");
-            System.out.println("2 - Jogador vs Jogador (PvP)");
+            System.out.println("1 - Jogador vs Computador");
+            System.out.println("2 - Jogador vs Jogador");
             final int modoJogo = sc.nextInt();
 
             if (modoJogo == 2) {
-                System.out.println("\n--- Selecao do Jogador 1 ---");
+                System.out.println("\n--- Seleção do Jogador 1 ---");
                 System.out.println(
                     "1- BulbaSal | 2- CharSal | 3- SquirtSal | 4- ChikoSal | 5- CyndaSal |"
                         + " 6- TotoSal");
@@ -105,7 +105,7 @@ public class Main {
                     p1 = totosal;
                 }
 
-                System.out.println("\n--- Selecao do Jogador 2 ---");
+                System.out.println("\n--- Seleção do Jogador 2 ---");
                 System.out.println(
                     "1- BulbaSal | 2- CharSal | 3- SquirtSal | 4- ChikoSal | 5- CyndaSal |"
                         + " 6- TotoSal");
@@ -132,11 +132,11 @@ public class Main {
                     arenaPvP.iniciarCombatePvP(p1, p2, bag1, bag2);
                     Batalha.pausar(Batalha.PAUSA_CURTA_MS);
                 } else {
-                    System.out.println("Selecao de pokesal invalida.");
+                    System.out.println("Seleção de PokeSal invalida.");
                 }
 
                 System.out.println("\nDeseja voltar ao menu principal?");
-                System.out.println("1 - Sim (Escolher outro modo ou Pokemon)");
+                System.out.println("1 - Sim (Escolher outro modo ou PokeSal)");
                 System.out.println("2 - Nao (Sair)");
                 final int fimPvP = sc.nextInt();
                 if (fimPvP == 2) {
@@ -195,8 +195,8 @@ public class Main {
                         if (!venceu) {
                             Batalha.pausar(Batalha.PAUSA_LONGA_MS);
                             System.out.println("\n Não Desanime Ainda... O que deseja fazer?");
-                            System.out.println("1 - Tentar De Novo (Mesmo Pokemon)");
-                            System.out.println("2 - Escolher outro Pokemon (Voltar ao inicio)");
+                            System.out.println("1 - Tentar De Novo (Mesmo PokeSal)");
+                            System.out.println("2 - Escolher outro PokeSal (Voltar ao inicio)");
                             System.out.println("3 - Desistir e ir para casa");
                             final int esc = sc.nextInt();
                             if (esc == 2) {
@@ -208,9 +208,9 @@ public class Main {
                         } else {
                             Batalha.pausar(Batalha.PAUSA_LONGA_MS);
                             System.out.println("\nO que deseja fazer?");
-                            System.out.println("1 - Continuar procurando batalhas (Mesmo Pokemon)");
-                            System.out.println("2 - Escolher outro Pokemon (Voltar ao inicio)");
-                            System.out.println("3 - Desistir e ir para casa");
+                            System.out.println("1 - Continuar procurando batalhas (Mesmo PokeSal)");
+                            System.out.println("2 - Escolher outro PokeSal (Voltar ao Inicio)");
+                            System.out.println("3 - Desistir e ir para Casa");
                             final int esc = sc.nextInt();
                             if (esc == 2) {
                                 jogando = false;
