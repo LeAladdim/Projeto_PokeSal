@@ -1,6 +1,13 @@
 package pokeucsal;
 
-/** Guarda cada captura feita no torneio (colaborador externo do requisito de captura). Pode falhar: ver Torneio. */
+/** Guarda cada captura feita no torneio. */
 public interface RepositorioCapturas {
-    void salvarCaptura(String treinador, String pokemonCapturado) throws Exception;
+    /**
+     * Guarda uma captura.
+     *
+     * @param treinador quem capturou
+     * @param pokesalCapturado nome do Pokésal capturado
+     * @throws Exception se não for possível guardar
+     */
+    void salvarCaptura(String treinador, String pokesalCapturado) throws Exception;
 }

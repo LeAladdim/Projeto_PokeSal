@@ -6,7 +6,6 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** A implementação "de verdade" do gerador (a única que usa Random): respeita as faixas que a regra de negócio espera. */
 class GeradorAleatorioPadraoTest {
     @Test
     void testPrecisaoFicaEntreZeroENoventaENove() {

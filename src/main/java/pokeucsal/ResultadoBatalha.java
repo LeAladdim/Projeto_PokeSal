@@ -1,26 +1,53 @@
 package pokeucsal;
 
+/** Resultado de uma batalha: vencedor, perdedor, número de turnos e Pokésals usados. */
 public class ResultadoBatalha {
     private final String vencedor;
     private final String perdedor;
     private final int turnos;
-    private final String pokemonVencedor;
-    private final String pokemonPerdedor;
+    private final String pokesalVencedor;
+    private final String pokesalPerdedor;
 
+    /**
+     * Cria o resultado.
+     *
+     * @param v nome do vencedor
+     * @param p nome do perdedor
+     * @param t número de turnos
+     * @param pv Pokésal do vencedor
+     * @param pp Pokésal do perdedor
+     */
     public ResultadoBatalha(String v, String p, int t, String pv, String pp) {
-        this.vencedor = v; this.perdedor = p; this.turnos = t;
-        this.pokemonVencedor = pv; this.pokemonPerdedor = pp;
+        this.vencedor = v;
+        this.perdedor = p;
+        this.turnos = t;
+        this.pokesalVencedor = pv;
+        this.pokesalPerdedor = pp;
     }
-    public String getVencedor() { return vencedor; }
-    public String getPerdedor() { return perdedor; }
-    public int getTurnos() { return turnos; }
-    // Estes dois getters não existiam: os Pokésals usados eram guardados mas ninguém conseguia lê-los
-    // (a regra 2.3 exige "Pokésal utilizados" no resultado, e o ArgumentCaptor dos testes precisa lê-los).
-    public String getPokemonVencedor() { return pokemonVencedor; }
-    public String getPokemonPerdedor() { return pokemonPerdedor; }
+    /** Devolve o nome do vencedor. */
+    public String getVencedor() {
+        return vencedor;
+    }
+    /** Devolve o nome do perdedor. */
+    public String getPerdedor() {
+        return perdedor;
+    }
+    /** Devolve o número de turnos. */
+    public int getTurnos() {
+        return turnos;
+    }
+
+    /** Devolve o nome do Pokésal do vencedor. */
+    public String getPokesalVencedor() {
+        return pokesalVencedor;
+    }
+    /** Devolve o nome do Pokésal do perdedor. */
+    public String getPokesalPerdedor() {
+        return pokesalPerdedor;
+    }
 
     @Override
     public String toString() {
-        return vencedor + " (" + pokemonVencedor + ") venceu " + perdedor + " (" + pokemonPerdedor + ") em " + turnos + " turno(s)";
+        return vencedor + " (" + pokesalVencedor + ") venceu " + perdedor + " (" + pokesalPerdedor + ") em " + turnos + " turno(s)";
     }
 }

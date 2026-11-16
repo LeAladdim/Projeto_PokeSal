@@ -11,10 +11,6 @@ import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Mochila (regra 5): no máximo 2 itens por batalha, cada item 1 vez. O teclado é um Scanner com texto fixo.
- * Colaboradores trocados por fakes simples: registro em memória, gerador fixo e um terreno neutro.
- */
 class BagTest {
     private static final Clock DIA = Clock.fixed(Instant.parse("2026-11-13T15:00:00Z"), ZoneOffset.UTC);
     private static final Clock NOITE = Clock.fixed(Instant.parse("2026-11-13T23:00:00Z"), ZoneOffset.UTC);
@@ -22,7 +18,7 @@ class BagTest {
     private RegistroEmMemoria registro;
     private GeradorFixo gerador;
     private Bag bag;
-    private Pokemon aliado;
+    private Pokesal aliado;
     private Treinador treinador;
     private Batalha arena;
 
@@ -30,21 +26,25 @@ class BagTest {
     void setUp() {
         Batalha.modoTeste = true;
         registro = new RegistroEmMemoria();
-        gerador = new GeradorFixo(0, 0.0);     // chance 0.0: o Sal Shard sempre escolhe o 1º terreno possível
+        gerador = new GeradorFixo(0, 0.0);
         bag = new Bag();
-        aliado = new Pokemon("CharSal", new TipoFogo(), 50, 40, 200, 80, new Golpe[]{});
+        aliado = new Pokesal("CharSal", new TipoFogo(), 50, 40, 200, 80, new Golpe[]{});
         treinador = new Treinador("Jogador", aliado);
         arena = new Batalha(c -> Terrenos.NEUTRO, DIA, r -> { }, registro, gerador);
     }
 
     @AfterEach
-    void tearDown() { Batalha.modoTeste = false; }
+    void tearDown() {
+        Batalha.modoTeste = false;
+    }
 
     private boolean abrir(Scanner teclado) {
         return bag.abrirMochila(aliado, arena, registro, treinador, teclado, gerador);
     }
 
-    private boolean abrir(String teclado) { return abrir(new Scanner(teclado)); }
+    private boolean abrir(String teclado) {
+        return abrir(new Scanner(teclado));
+    }
 
     @Test
     void testPotionCuraQuinzePorCentoDoHpMaximo() {
@@ -95,20 +95,37 @@ class BagTest {
     }
 
     @Test
-    void testSalShardDeNoiteNuncaCriaAsfaltoQuente() {
+    void testSalShardSempreMudaOTerrenoQualquerQueSejaOAtualOSorteioOuAHora() {
+        String[] iniciais = { Terrenos.NEUTRO, Terrenos.ASFALTO_QUENTE, Terrenos.PISO_ESCORREGADIO, Terrenos.CANTEIRO_CENTRAL };
+        double[] sorteios = { 0.0, 0.5, 0.99 };
+        for (String inicial : iniciais) {
+            for (double sorteio : sorteios) {
+                for (Clock relogio : new Clock[] { DIA, NOITE }) {
+                    GeradorFixo fixo = new GeradorFixo(0, sorteio);
+                    Batalha batalha = new Batalha(c -> inicial, relogio, r -> { }, registro, fixo);
+                    batalha.mudarTerrenoSalShard(registro, fixo);
+                    assertFalse(inicial.equals(batalha.getClimaAtual()));
+                    assertTrue(Terrenos.todos().contains(batalha.getClimaAtual()));
+                }
+            }
+        }
+    }
+
+    @Test
+    void testSalShardDeNoitePodeCriarAsfaltoQuente() {
         Batalha arenaNoite = new Batalha(c -> Terrenos.NEUTRO, NOITE, r -> { }, registro, gerador);
 
         assertTrue(bag.abrirMochila(aliado, arenaNoite, registro, treinador, new Scanner("4"), gerador));
 
-        assertEquals(Terrenos.PISO_ESCORREGADIO, arenaNoite.getClimaAtual());
+        assertEquals(Terrenos.ASFALTO_QUENTE, arenaNoite.getClimaAtual());
     }
 
     @Test
     void testItemEsgotadoNaoGastaOLimiteDeItens() {
         Scanner teclado = new Scanner("1\n1\n2\n");
-        assertTrue(abrir(teclado));    // Potion
-        assertFalse(abrir(teclado));   // Potion de novo: acabou, e isso não conta como item usado
-        assertTrue(abrir(teclado));    // Super Potion ainda cabe: só 1 item foi gasto de verdade
+        assertTrue(abrir(teclado));
+        assertFalse(abrir(teclado));
+        assertTrue(abrir(teclado));
         assertEquals(1, registro.quantos("item:Jogador:Potion"));
         assertEquals(1, registro.quantos("item:Jogador:Super Potion"));
     }
@@ -119,8 +136,7 @@ class BagTest {
                 + "2\n2\n"
                 + "3\n3\n"
                 + "4\n4\n");
-        // Em cada par: o 1º uso consome o item; o 2º falha por falta de estoque. O limite de 2 itens atrapalharia,
-        // então a mochila é zerada entre os pares (resetarUsoBatalha devolve estoque e contador).
+
         for (int item = 1; item <= 4; item++) {
             bag.resetarUsoBatalha();
             assertTrue(abrir(teclado));
@@ -129,11 +145,12 @@ class BagTest {
     }
 
     @Test
-    void testLimiteDeDoisItensPorBatalha() {
+    void testUsoLimiteDeItensExcedido() {
         Scanner teclado = new Scanner("1\n2\n3\n");
-        assertTrue(abrir(teclado));    // item 1
-        assertTrue(abrir(teclado));    // item 2
-        assertFalse(abrir(teclado));   // 3º item: limite atingido (e a mochila nem lê o teclado)
+        assertTrue(abrir(teclado));
+        assertTrue(abrir(teclado));
+        LimiteDeItensExcedidoException erro = assertThrows(LimiteDeItensExcedidoException.class, () -> abrir(teclado));
+        assertEquals("Limite Máximo De 2 itens Atingido Nesta Batalha.", erro.getMessage());
         assertEquals(0, registro.quantos("item:Jogador:Antídoto"));
     }
 
@@ -142,11 +159,11 @@ class BagTest {
         Scanner teclado = new Scanner("1\n2\n1\n");
         abrir(teclado);
         abrir(teclado);
-        assertFalse(abrir(new Scanner("3")));   // limite atingido
+        assertThrows(LimiteDeItensExcedidoException.class, () -> abrir(new Scanner("3")));
 
         bag.resetarUsoBatalha();
 
-        assertTrue(abrir(new Scanner("1")));    // a Potion voltou
+        assertTrue(abrir(new Scanner("1")));
     }
 
     @Test
@@ -160,9 +177,9 @@ class BagTest {
     @Test
     void testMochilaMostraMenuEMensagensNoConsole() {
         String saida = ConsoleTestes.comConsole(() -> {
-            abrir(new Scanner("1"));           // Potion
-            abrir(new Scanner("2"));           // Super Potion
-            abrir(new Scanner("3"));           // limite atingido: 3º item
+            abrir(new Scanner("1"));
+            abrir(new Scanner("2"));
+            assertThrows(LimiteDeItensExcedidoException.class, () -> abrir(new Scanner("3")));
             bag.resetarUsoBatalha();
             abrir(new Scanner("3"));
             abrir(new Scanner("4"));
@@ -170,7 +187,6 @@ class BagTest {
         assertTrue(saida.contains("--- MOCHILA (Itens Usados: 0/2) ---"));
         assertTrue(saida.contains("Usou Potion e Curou 15%!"));
         assertTrue(saida.contains("Usou Super Potion e Curou 35%!"));
-        assertTrue(saida.contains("Limite Máximo De 2 itens Atingido Nesta Batalha."));
         assertTrue(saida.contains("Usou Antídoto e Limpou os Status!"));
         assertTrue(saida.contains("A Sal Shard brilhou!"));
     }

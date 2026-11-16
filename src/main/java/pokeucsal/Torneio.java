@@ -1,4 +1,5 @@
 package pokeucsal;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -7,6 +8,9 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+/**
+ * Torneio eliminatório de 4 ou 8 treinadores, com captura do Pokésal derrotado, escolha do Pokésal antes de cada luta, revitalização a cada batalha e classificação final por vitórias.
+ */
 public class Torneio {
     private static final Logger LOG = Logger.getLogger(Torneio.class.getName());
 
@@ -17,22 +21,26 @@ public class Torneio {
     private final RepositorioCapturas repositorioCapturas;
     private final NotificadorCaptura notificadorCaptura;
 
-    // Placar do torneio (na ordem de inscrição): vitórias e como cada treinador terminou.
     private final Map<Treinador, Integer> vitorias = new LinkedHashMap<>();
     private final Map<Treinador, String> situacao = new LinkedHashMap<>();
 
     /**
-     * Todos os colaboradores entram pelo construtor (regra 2.5): quem decide a captura, quem a guarda e quem avisa.
-     * Não existe construtor "só com a arena": ele precisaria criar esses colaboradores aqui dentro.
+     * Cria o torneio. Todos os colaboradores chegam pelo construtor.
+     *
+     * @param partes treinadores inscritos (4 ou 8)
+     * @param arena batalha usada em cada confronto
+     * @param sc teclado do jogador
+     * @param regraDeCaptura decide se a captura dá certo
+     * @param repositorioCapturas guarda as capturas
+     * @param notificadorCaptura avisa as capturas
+     * @throws IllegalArgumentException se o número de treinadores não for 4 nem 8
      */
     public Torneio(List<Treinador> partes, Batalha arena, Scanner sc, RegraDeCaptura regraDeCaptura,
                    RepositorioCapturas repositorioCapturas, NotificadorCaptura notificadorCaptura) {
-        // Regra 2.3: o torneio é eliminatório com 4 ou 8 treinadores.
-        // Sem esta validação, uma lista ímpar estourava IndexOutOfBounds no meio do torneio (rodada.get(i + 1)).
         if (partes == null || (partes.size() != 4 && partes.size() != 8)) {
             throw new IllegalArgumentException("O torneio exige 4 ou 8 treinadores.");
         }
-        this.participantes = new ArrayList<>(partes); // cópia: mexer na lista de fora não altera o torneio
+        this.participantes = new ArrayList<>(partes);
         this.arena = arena;
         this.sc = sc;
         this.regraDeCaptura = regraDeCaptura;
@@ -44,9 +52,16 @@ public class Torneio {
         }
     }
 
-    /** Vitórias de cada treinador, na ordem de inscrição (só leitura). */
-    public Map<Treinador, Integer> getVitorias() { return Collections.unmodifiableMap(vitorias); }
+    /** Devolve as vitórias de cada treinador, na ordem de inscrição (somente leitura). */
+    public Map<Treinador, Integer> getVitorias() {
+        return Collections.unmodifiableMap(vitorias);
+    }
 
+    /**
+     * Joga o torneio inteiro e mostra a classificação final.
+     *
+     * @return o campeão
+     */
     public Treinador iniciarTorneio() {
         List<Treinador> rodada = new ArrayList<>(participantes);
         System.out.println("\n=== INÍCIO DO TORNEIO (" + participantes.size() + " Treinadores) ===");
@@ -60,25 +75,22 @@ public class Torneio {
                 Treinador a = rodada.get(i);
                 Treinador b = rodada.get(i + 1);
 
-                // Cada batalha começa do zero: HP cheio, sem status, atributos e precisão originais (time inteiro).
                 revitalizar(a);
                 revitalizar(b);
 
-                // Antes da luta: quem é humano vê o adversário e pode trocar de Pokésal entre os capturados.
                 prepararTreinador(a, b);
                 prepararTreinador(b, a);
 
-                System.out.println("\n>>> CONFRONTO: " + a.getNome() + " (" + a.getPokemon().getNome() + ") x "
-                        + b.getNome() + " (" + b.getPokemon().getNome() + ")");
+                System.out.println("\n>>> CONFRONTO: " + a.getNome() + " (" + a.getPokesal().getNome() + ") x "
+                        + b.getNome() + " (" + b.getPokesal().getNome() + ")");
                 Treinador vencedor = arena.iniciarCombatePvP(a, b, sc);
                 Treinador derrotado = (vencedor == a) ? b : a;
                 proxima.add(vencedor);
                 vitorias.merge(vencedor, 1, Integer::sum);
                 situacao.put(derrotado, finalDoTorneio ? "Vice-campeão" : "Eliminado: " + nomeDaFase(rodada.size()));
 
-                // Depois da luta: o vencedor humano pode tentar capturar o Pokésal derrotado (menos na final: acabou).
                 if (!finalDoTorneio && !vencedor.isCpu()) {
-                    oferecerCaptura(vencedor, derrotado.getPokemon());
+                    oferecerCaptura(vencedor, derrotado.getPokesal());
                 }
             }
             rodada = proxima;
@@ -95,21 +107,22 @@ public class Torneio {
     }
 
     private static String nomeDaFase(int treinadoresNaRodada) {
-        if (treinadoresNaRodada == 2) return "Final";
-        if (treinadoresNaRodada == 4) return "Semifinal";
+        if (treinadoresNaRodada == 2) {
+            return "Final";
+        }
+        if (treinadoresNaRodada == 4) {
+            return "Semifinal";
+        }
         return "Quartas de final";
     }
 
     private void revitalizar(Treinador t) {
-        for (Pokemon p : t.getEquipe()) p.restaurar();
+        for (Pokesal p : t.getEquipe()) p.restaurar();
     }
 
-    // -------------------------------------------------------- tabela final
-
-    /** Quem venceu mais partidas fica em cima; empate de vitórias mantém a ordem de inscrição. */
     private void exibirClassificacao() {
         List<Treinador> ordem = new ArrayList<>(participantes);
-        ordem.sort((x, y) -> Integer.compare(vitorias.get(y), vitorias.get(x))); // sort de List é estável
+        ordem.sort((x, y) -> Integer.compare(vitorias.get(y), vitorias.get(x)));
 
         System.out.println("\n============ CLASSIFICAÇÃO FINAL ============");
         System.out.println(String.format("%-3s %-14s %-11s %-5s %-8s %s", "#", "Treinador", "Inicial", "Vit.", "Capturas", "Situação"));
@@ -120,9 +133,7 @@ public class Torneio {
         }
     }
 
-    // ---------------------------------------------------------------- captura
-
-    private void oferecerCaptura(Treinador vencedor, Pokemon derrotado) {
+    private void oferecerCaptura(Treinador vencedor, Pokesal derrotado) {
         System.out.println("\nVocê derrotou " + derrotado.getNome() + " (" + derrotado.getTipo().getNomeTipo() + ")!");
         System.out.println("Deseja tentar capturá-lo? (1 - Sim | 0 - Não)");
         if (lerOpcao(0, 1) != 1) {
@@ -138,8 +149,7 @@ public class Torneio {
         }
     }
 
-    /** Depois que o Pokésal já está no time: guardar e avisar. Se qualquer um falhar, a captura continua valendo. */
-    private void registrarCaptura(Treinador vencedor, Pokemon capturado) {
+    private void registrarCaptura(Treinador vencedor, Pokesal capturado) {
         try {
             repositorioCapturas.salvarCaptura(vencedor.getNome(), capturado.getNome());
         } catch (Exception e) {
@@ -152,11 +162,11 @@ public class Torneio {
         }
     }
 
-    // ------------------------------------------------- próxima luta e troca
-
     private void prepararTreinador(Treinador t, Treinador adversario) {
-        if (t.isCpu()) return;
-        Pokemon inimigo = adversario.getPokemon();
+        if (t.isCpu()) {
+            return;
+        }
+        Pokesal inimigo = adversario.getPokesal();
         System.out.println("\n--- PRÓXIMA LUTA de " + t.getNome() + " ---");
         System.out.println("Seus Pokésals foram revitalizados para a luta.");
         System.out.println("Você enfrentará " + adversario.getNome() + " com " + inimigo.getNome()
@@ -166,36 +176,40 @@ public class Torneio {
     }
 
     private void oferecerTroca(Treinador t) {
-        List<Pokemon> equipe = t.getEquipe();
-        if (equipe.size() < 2) return; // só o inicial: não há o que escolher
+        List<Pokesal> equipe = t.getEquipe();
+        if (equipe.size() < 2) {
+            return;
+        }
 
         System.out.println("Escolha quem vai lutar:");
         for (int i = 0; i < equipe.size(); i++) {
-            Pokemon p = equipe.get(i);
-            String emCampo = (p == t.getPokemon()) ? " <- em campo" : "";
+            Pokesal p = equipe.get(i);
+            String emCampo = (p == t.getPokesal()) ? " <- em campo" : "";
             System.out.println((i + 1) + " - " + p.getNome() + " (" + p.getTipo().getNomeTipo() + ") HP " + p.getHp() + "/"
                     + p.getMaxHp() + " | Atk " + p.getAtk() + " | Def " + p.getDef() + " | Spd " + p.getSpd() + emCampo);
         }
         int escolha = lerOpcao(1, equipe.size());
-        // Sem entrada válida (ex.: fim do teclado) mantém quem já estava em campo.
+
         if (escolha >= 1) {
-            Pokemon novo = equipe.get(escolha - 1);
-            if (novo != t.getPokemon()) System.out.println(t.getNome() + " trocou para " + novo.getNome() + "!");
-            t.trocarPokemon(novo);
+            Pokesal novo = equipe.get(escolha - 1);
+            if (novo != t.getPokesal()) {
+                System.out.println(t.getNome() + " trocou para " + novo.getNome() + "!");
+            }
+            t.trocarPokesal(novo);
         }
     }
 
-    /**
-     * Lê um número entre min e max, repetindo a pergunta se vier algo inválido.
-     * Devolve min - 1 se o teclado acabar (Scanner sem mais entrada), para o torneio nunca travar nem quebrar.
-     */
     private int lerOpcao(int min, int max) {
         while (true) {
             System.out.print("> ");
-            if (!sc.hasNext()) return min - 1;
+            if (!sc.hasNext()) {
+                return min - 1;
+            }
             if (sc.hasNextInt()) {
                 int v = sc.nextInt();
-                if (v >= min && v <= max) return v;
+                if (v >= min && v <= max) {
+                    return v;
+                }
             } else {
                 sc.next();
             }

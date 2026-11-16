@@ -9,13 +9,8 @@ import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Consulta o clima ATUAL de Salvador na API gratuita Open-Meteo (https://open-meteo.com), sem chave de API.
- *
- * Por quê sem biblioteca de JSON: só precisamos de 3 números do bloco "current"; assim o pom.xml não muda.
- */
+/** Consulta o clima atual de Salvador na API gratuita Open-Meteo, sem chave de acesso. */
 public class ClienteClimaOpenMeteo implements ClienteClima {
-    // Salvador-BA: latitude -12.9714, longitude -38.5014.
     static final String URL_SALVADOR = "https://api.open-meteo.com/v1/forecast"
             + "?latitude=-12.9714&longitude=-38.5014"
             + "&current=weather_code,cloud_cover,precipitation"
@@ -26,10 +21,17 @@ public class ClienteClimaOpenMeteo implements ClienteClima {
     private final HttpClient http;
     private final URI uri;
 
+    /** Cria o cliente apontando para Salvador, com tempo limite de 4 segundos. */
     public ClienteClimaOpenMeteo() {
         this(HttpClient.newBuilder().connectTimeout(TEMPO_LIMITE).build(), URI.create(URL_SALVADOR));
     }
 
+    /**
+     * Cria o cliente com um cliente HTTP e um endereço escolhidos (usado nos testes).
+     *
+     * @param http cliente HTTP
+     * @param uri endereço da consulta
+     */
     public ClienteClimaOpenMeteo(HttpClient http, URI uri) {
         this.http = http;
         this.uri = uri;
@@ -45,17 +47,18 @@ public class ClienteClimaOpenMeteo implements ClienteClima {
         return interpretar(resposta.body());
     }
 
-    /**
-     * Lê o bloco "current" da resposta, que tem esta forma:
-     * {"current_units":{...}, "current":{"time":"...","weather_code":3,"cloud_cover":85,"precipitation":0.0}}
-     * Procura por "current": (com aspas e dois-pontos) para não confundir com "current_units".
-     */
     static ObservacaoClima interpretar(String json) throws IOException {
-        if (json == null) throw new IOException("Resposta vazia do serviço de clima.");
+        if (json == null) {
+            throw new IOException("Resposta vazia do serviço de clima.");
+        }
         int inicio = json.indexOf("\"current\":");
-        if (inicio < 0) throw new IOException("Resposta sem o bloco \"current\".");
+        if (inicio < 0) {
+            throw new IOException("Resposta sem o bloco \"current\".");
+        }
         int fim = json.indexOf('}', inicio);
-        if (fim < 0) throw new IOException("Bloco \"current\" incompleto.");
+        if (fim < 0) {
+            throw new IOException("Bloco \"current\" incompleto.");
+        }
         String bloco = json.substring(inicio, fim);
 
         return new ObservacaoClima(
@@ -66,7 +69,9 @@ public class ClienteClimaOpenMeteo implements ClienteClima {
 
     private static double numero(String bloco, String campo) throws IOException {
         Matcher m = Pattern.compile("\"" + campo + "\"\\s*:\\s*(-?\\d+(?:\\.\\d+)?)").matcher(bloco);
-        if (!m.find()) throw new IOException("Campo \"" + campo + "\" ausente na resposta do clima.");
+        if (!m.find()) {
+            throw new IOException("Campo \"" + campo + "\" ausente na resposta do clima.");
+        }
         return Double.parseDouble(m.group(1));
     }
 }

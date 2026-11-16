@@ -1,6 +1,12 @@
 package pokeucsal;
 
-/** Decide se uma tentativa de captura dá certo. Fica atrás de uma interface para os testes escolherem o resultado. */
+/** Decide se uma tentativa de captura dá certo. */
 public interface RegraDeCaptura {
-    boolean capturaTemSucesso(Pokemon alvo);
+    /**
+     * Decide o resultado da tentativa.
+     *
+     * @param alvo Pokésal que se tenta capturar
+     * @return true se a captura deu certo
+     */
+    boolean capturaTemSucesso(Pokesal alvo);
 }

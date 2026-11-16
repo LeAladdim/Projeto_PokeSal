@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
-/** Ajuda dos testes: roda um trecho com o console "de verdade" ligado (sem silêncio e sem pausas) e devolve o que foi impresso. */
 final class ConsoleTestes {
     private ConsoleTestes() { }
 

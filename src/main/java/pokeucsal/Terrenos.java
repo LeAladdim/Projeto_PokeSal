@@ -2,40 +2,38 @@ package pokeucsal;
 
 import java.time.Clock;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Centraliza os nomes dos terrenos e a regra "Asfalto Quente só existe de dia".
- *
- * Por quê: antes os nomes ("Asfalto Quente", "Piso Escorregadio"...) estavam digitados como
- * texto solto em Main, Batalha e Golpe. Um erro de digitação em qualquer um deles
- * faria o bônus de terreno simplesmente nunca ativar, sem nenhum erro de compilação.
- */
+/** Nomes dos terrenos e a regra de que o Asfalto Quente só existe de dia. */
 public final class Terrenos {
     public static final String ASFALTO_QUENTE = "Asfalto Quente";
     public static final String PISO_ESCORREGADIO = "Piso Escorregadio";
     public static final String CANTEIRO_CENTRAL = "Canteiro Central";
-    /** Terreno "sem efeito", usado como valor padrão se o serviço de terreno falhar ou devolver null. */
+
     public static final String NEUTRO = "Terreno Neutro";
 
-    private static final int HORA_AMANHECER = 6;   // dia: 06:00 até 17:59
+    private static final int HORA_AMANHECER = 6;
     private static final int HORA_ANOITECER = 18;
 
     private Terrenos() { }
 
-    /** O horário SEMPRE vem do Clock recebido (e não de new Date()), para poder ser mockado nos testes. */
+    /**
+     * Informa se é dia (das 6h às 17h59) segundo o relógio recebido.
+     *
+     * @param relogio relógio que informa o horário
+     * @return true se for dia
+     */
     public static boolean ehDia(Clock relogio) {
         int hora = LocalTime.now(relogio).getHour();
         return hora >= HORA_AMANHECER && hora < HORA_ANOITECER;
     }
 
-    /** Terrenos que podem existir agora: de noite o Asfalto Quente fica de fora. */
-    public static List<String> disponiveis(boolean dia) {
-        List<String> lista = new ArrayList<>();
-        if (dia) lista.add(ASFALTO_QUENTE);
-        lista.add(PISO_ESCORREGADIO);
-        lista.add(CANTEIRO_CENTRAL);
-        return lista;
+    /**
+     * Devolve os três terrenos com efeito, sem o terreno neutro.
+     *
+     * @return lista com Asfalto Quente, Piso Escorregadio e Canteiro Central
+     */
+    public static List<String> todos() {
+        return List.of(ASFALTO_QUENTE, PISO_ESCORREGADIO, CANTEIRO_CENTRAL);
     }
 }

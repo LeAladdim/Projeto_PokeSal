@@ -1,6 +1,13 @@
 package pokeucsal;
 
-/** Avisa o jogador que um Pokésal foi capturado (colaborador externo; uma falha aqui não desfaz a captura). */
+/** Avisa que um Pokésal foi capturado. Uma falha aqui não desfaz a captura. */
 public interface NotificadorCaptura {
-    void notificarCaptura(String treinador, String pokemonCapturado) throws Exception;
+    /**
+     * Avisa a captura.
+     *
+     * @param treinador quem capturou
+     * @param pokesalCapturado nome do Pokésal capturado
+     * @throws Exception se o aviso falhar
+     */
+    void notificarCaptura(String treinador, String pokesalCapturado) throws Exception;
 }

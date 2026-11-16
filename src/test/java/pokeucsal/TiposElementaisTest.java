@@ -6,20 +6,23 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** Matriz de vantagens (regra 2 das Fases 01/02) e efeitos únicos de buff/debuff de cada tipo. Sem mocks: tipos são regra pura. */
 class TiposElementaisTest {
     private final TipoPoke fogo = new TipoFogo();
     private final TipoPoke agua = new TipoAgua();
     private final TipoPoke planta = new TipoPlanta();
 
     @BeforeEach
-    void setUp() { Batalha.modoTeste = true; }
+    void setUp() {
+        Batalha.modoTeste = true;
+    }
 
     @AfterEach
-    void tearDown() { Batalha.modoTeste = false; }
+    void tearDown() {
+        Batalha.modoTeste = false;
+    }
 
-    private static Pokemon pokemon(TipoPoke tipo) {
-        return new Pokemon("Alvo", tipo, 50, 40, 100, 30, new Golpe[]{});
+    private static Pokesal pokesal(TipoPoke tipo) {
+        return new Pokesal("Alvo", tipo, 50, 40, 100, 30, new Golpe[]{});
     }
 
     @Test
@@ -41,7 +44,6 @@ class TiposElementaisTest {
 
     @Test
     void testTipoContraOProprioTipoEhNeutroPoisOsDocumentosNaoDefinemOutraRegra() {
-        // Se a equipe decidir que tipo igual é "pouco efetivo" (x0.5), este é o teste a mudar junto com os 3 calcMult.
         assertEquals(1.0, fogo.calcMult(fogo));
         assertEquals(1.0, agua.calcMult(agua));
         assertEquals(1.0, planta.calcMult(planta));
@@ -49,44 +51,47 @@ class TiposElementaisTest {
 
     @Test
     void testBuffDeCadaTipo() {
-        Pokemon f = pokemon(fogo);
+        Pokesal f = pokesal(fogo);
         fogo.apBf(f);
-        assertEquals(60, f.getAtk());   // Fogo: +10 de ataque...
-        assertEquals(35, f.getDef());   // ...e -5 de defesa
+        assertEquals(60, f.getAtk());
+        assertEquals(35, f.getDef());
 
-        Pokemon a = pokemon(agua);
+        Pokesal a = pokesal(agua);
         agua.apBf(a);
-        assertEquals(40, a.getSpd());   // Água: +10 de velocidade...
-        assertEquals(45, a.getAtk());   // ...e -5 de ataque
+        assertEquals(40, a.getSpd());
+        assertEquals(45, a.getAtk());
 
-        Pokemon p = pokemon(planta);
+        Pokesal p = pokesal(planta);
         planta.apBf(p);
-        assertEquals(50, p.getDef());   // Planta: +10 de defesa...
-        assertEquals(25, p.getSpd());   // ...e -5 de velocidade
+        assertEquals(50, p.getDef());
+        assertEquals(25, p.getSpd());
     }
 
     @Test
     void testDebuffDeCadaTipo() {
-        Pokemon f = pokemon(planta);
+        Pokesal f = pokesal(planta);
         fogo.apDb(f);
         assertEquals(35, f.getDef());
 
-        Pokemon a = pokemon(planta);
+        Pokesal a = pokesal(planta);
         agua.apDb(a);
         assertEquals(45, a.getAtk());
 
-        Pokemon p = pokemon(fogo);
+        Pokesal p = pokesal(fogo);
         planta.apDb(p);
         assertEquals(25, p.getSpd());
     }
 
     @Test
     void testBuffEDebuffAvisamNoConsole() {
-        Pokemon alvo = pokemon(fogo);
+        Pokesal alvo = pokesal(fogo);
         String saida = ConsoleTestes.comConsole(() -> {
-            fogo.apBf(alvo); fogo.apDb(alvo);
-            agua.apBf(alvo); agua.apDb(alvo);
-            planta.apBf(alvo); planta.apDb(alvo);
+            fogo.apBf(alvo);
+            fogo.apDb(alvo);
+            agua.apBf(alvo);
+            agua.apDb(alvo);
+            planta.apBf(alvo);
+            planta.apDb(alvo);
         });
         assertTrue(saida.contains("Efeito Único (Fogo): O Ataque de Alvo subiu"));
         assertTrue(saida.contains("Efeito Único (Fogo): A Defesa de Alvo foi reduzida"));

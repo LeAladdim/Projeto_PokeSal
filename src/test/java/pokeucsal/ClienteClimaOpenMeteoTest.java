@@ -17,11 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * Cliente da Open-Meteo isolado da internet: o HttpClient e a resposta HTTP são mocks.
- * Matcher any() no send(): quem testamos é o que o cliente FAZ com a resposta, não o objeto exato do handler.
- * O pedido enviado é inspecionado com ArgumentCaptor, porque a URL de Salvador É parte do que está sendo testado.
- */
 @ExtendWith(MockitoExtension.class)
 class ClienteClimaOpenMeteoTest {
     private static final URI URI_TESTE = URI.create("https://exemplo.test/clima");
@@ -35,7 +30,9 @@ class ClienteClimaOpenMeteoTest {
     private ClienteClimaOpenMeteo cliente;
 
     @BeforeEach
-    void setUp() { cliente = new ClienteClimaOpenMeteo(http, URI_TESTE); }
+    void setUp() {
+        cliente = new ClienteClimaOpenMeteo(http, URI_TESTE);
+    }
 
     @Test
     void testObtemObservacaoQuandoOServicoResponde200() throws Exception {
@@ -59,7 +56,7 @@ class ClienteClimaOpenMeteoTest {
 
         IOException erro = assertThrows(IOException.class, () -> cliente.obterObservacaoAtual());
         assertTrue(erro.getMessage().contains("500"));
-        verify(resposta, never()).body(); // resposta de erro não é lida
+        verify(resposta, never()).body();
     }
 
     @Test
@@ -87,7 +84,7 @@ class ClienteClimaOpenMeteoTest {
     void testRespostaInvalidaLancaIOException() {
         assertThrows(IOException.class, () -> ClienteClimaOpenMeteo.interpretar(null));
         assertThrows(IOException.class, () -> ClienteClimaOpenMeteo.interpretar("{}"));
-        assertThrows(IOException.class, () -> ClienteClimaOpenMeteo.interpretar("{\"current\":{\"weather_code\":3")); // bloco sem fechar
-        assertThrows(IOException.class, () -> ClienteClimaOpenMeteo.interpretar("{\"current\":{\"weather_code\":3}}")); // faltam campos
+        assertThrows(IOException.class, () -> ClienteClimaOpenMeteo.interpretar("{\"current\":{\"weather_code\":3"));
+        assertThrows(IOException.class, () -> ClienteClimaOpenMeteo.interpretar("{\"current\":{\"weather_code\":3}}"));
     }
 }
