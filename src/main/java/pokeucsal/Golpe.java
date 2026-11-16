@@ -15,7 +15,7 @@ public abstract class Golpe {
      * @param nome nome do golpe
      * @param poderBase dano base do golpe
      */
-    public Golpe(String nome, int poderBase) {
+    protected Golpe(String nome, int poderBase) {
         this.nome = nome;
         this.poderBase = poderBase;
     }
